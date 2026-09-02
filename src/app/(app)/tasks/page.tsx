@@ -35,6 +35,11 @@ export default function TasksPage() {
   const [editingTitle, setEditingTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Create form
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({ title: "", description: "", priority: "MEDIUM", dueDate: "" });
+  const [submitting, setSubmitting] = useState(false);
+
   // Detail panel
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -133,6 +138,32 @@ export default function TasksPage() {
 
   function closePanel() { setPanelOpen(false); setSelectedTask(null); }
 
+  async function handleCreateTask(e: React.FormEvent) {
+    e.preventDefault();
+    if (!createForm.title.trim()) return;
+    setSubmitting(true);
+    const res = await fetch("/api/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: createForm.title,
+        description: createForm.description || undefined,
+        priority: createForm.priority,
+        dueDate: createForm.dueDate ? new Date(createForm.dueDate).toISOString() : undefined,
+      }),
+    });
+    setSubmitting(false);
+    if (res.ok) {
+      toast.success("Task created");
+      setCreateOpen(false);
+      setCreateForm({ title: "", description: "", priority: "MEDIUM", dueDate: "" });
+      fetchTasks();
+    } else {
+      const { error } = await res.json();
+      toast.error(error || "Failed");
+    }
+  }
+
   function formatDate(d: string) {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
@@ -150,16 +181,34 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-3 pb-20">
-      <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
+        <button
+          onClick={() => setCreateOpen(true)}
+          className="hidden md:flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+        >
+          <Plus className="h-4 w-4" />
+          New Task
+        </button>
+      </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <input
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search tasks..."
-          className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
-        />
+      {/* Search + Add */}
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 max-w-md">
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search tasks..."
+            className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+        <button
+          onClick={() => setCreateOpen(true)}
+          className="flex items-center justify-center rounded-lg border border-slate-200 p-2 hover:bg-amber-50 hover:border-amber-300 transition-colors"
+          title="New Task"
+        >
+          <Plus className="h-5 w-5 text-amber-600" />
+        </button>
       </div>
 
       {loading ? (
@@ -361,6 +410,83 @@ export default function TasksPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </>
+      )}
+
+      {/* FAB — mobile + desktop */}
+      <button
+        onClick={() => setCreateOpen(true)}
+        className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg transition-transform hover:scale-105 active:scale-95 md:bottom-6"
+      >
+        <Plus className="h-6 w-6" />
+      </button>
+
+      {/* Create Task Panel */}
+      {createOpen && (
+        <>
+          <div className="fixed inset-0 z-40 md:bg-transparent bg-black/20" onClick={() => setCreateOpen(false)} />
+          <div className="fixed inset-0 md:inset-y-0 md:left-auto md:right-0 z-50 md:w-full md:max-w-md bg-white md:border-l md:shadow-xl overflow-y-auto">
+            <div className="flex items-center justify-between border-b p-4">
+              <h2 className="text-lg font-bold text-slate-900">New Task</h2>
+              <button onClick={() => setCreateOpen(false)} className="p-1 rounded hover:bg-slate-100">
+                <X className="h-5 w-5 text-slate-500" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateTask} className="p-4 space-y-4">
+              <div>
+                <label className="text-sm font-medium text-slate-700">Title *</label>
+                <input
+                  value={createForm.title}
+                  onChange={e => setCreateForm({ ...createForm, title: e.target.value })}
+                  placeholder="e.g. Replace HVAC filter"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700">Description</label>
+                <textarea
+                  value={createForm.description}
+                  onChange={e => setCreateForm({ ...createForm, description: e.target.value })}
+                  placeholder="Details..."
+                  rows={3}
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Priority</label>
+                  <select
+                    value={createForm.priority}
+                    onChange={e => setCreateForm({ ...createForm, priority: e.target.value })}
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="CRITICAL">Critical</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Due Date</label>
+                  <input
+                    type="date"
+                    value={createForm.dueDate}
+                    onChange={e => setCreateForm({ ...createForm, dueDate: e.target.value })}
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={submitting || !createForm.title.trim()}
+                className="w-full rounded-lg bg-amber-500 py-2.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+              >
+                {submitting ? "Creating..." : "Create Task"}
+              </button>
+            </form>
           </div>
         </>
       )}
