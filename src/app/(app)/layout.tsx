@@ -8,6 +8,7 @@ import {
   CheckSquare,
   Settings,
   LogOut,
+  Users,
 } from "lucide-react";
 import { BottomNav, MobileHeader } from "@/components/mobile-nav";
 
@@ -17,6 +18,7 @@ const navItems = [
   { label: "Invoices", href: "/invoices", icon: FileText },
   { label: "Tasks", href: "/tasks", icon: CheckSquare },
   { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Users", href: "/users", icon: Users },
 ];
 
 export default async function AppLayout({
@@ -68,7 +70,7 @@ export default async function AppLayout({
         {/* Header */}
         <header className="flex h-14 items-center border-b border-slate-200 bg-white px-4 md:px-6">
           <MobileHeader userName={session.user.name || "User"} />
-          <div className="hidden md:block">
+          <div className="hidden md:flex flex-1 justify-end">
             <span className="text-sm font-medium text-slate-600">
               {session.user.name}
             </span>

@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  Users,
 } from "lucide-react";
 
 const bottomTabs = [
@@ -27,6 +28,7 @@ const menuItems = [
   { label: "Invoices", href: "/invoices", icon: FileText },
   { label: "Tasks", href: "/tasks", icon: CheckSquare },
   { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Users", href: "/users", icon: Users },
 ];
 
 export function BottomNav() {
@@ -78,7 +80,7 @@ export function MobileHeader({ userName }: { userName: string }) {
         </div>
       </div>
 
-      <span className="text-sm font-medium text-slate-600">{userName}</span>
+      <span className="text-sm font-medium text-slate-600 md:hidden">{userName}</span>
 
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
