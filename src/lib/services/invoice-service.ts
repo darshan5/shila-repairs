@@ -45,18 +45,40 @@ export async function createInvoice(workOrderId: string) {
   return invoice;
 }
 
-export async function getInvoices(filters?: { status?: string }) {
+export async function getInvoices(filters?: { status?: string; search?: string; sortBy?: string; page?: number; limit?: number }) {
   const where: any = {};
   if (filters?.status && filters.status !== "all") where.status = filters.status;
+  if (filters?.search) {
+    where.OR = [
+      { invoiceNumber: { contains: filters.search, mode: "insensitive" } },
+      { customerName: { contains: filters.search, mode: "insensitive" } },
+      { workOrder: { title: { contains: filters.search, mode: "insensitive" } } },
+    ];
+  }
 
-  return prisma.invoice.findMany({
-    where,
-    include: {
-      workOrder: { select: { title: true, locationName: true } },
-      _count: { select: { lineItems: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const page = filters?.page || 1;
+  const limit = filters?.limit || 10;
+
+  let orderBy: any = { createdAt: "desc" };
+  if (filters?.sortBy === "total") orderBy = { total: "desc" };
+  else if (filters?.sortBy === "status") orderBy = { status: "asc" };
+  else if (filters?.sortBy === "oldest") orderBy = { createdAt: "asc" };
+
+  const [data, total] = await Promise.all([
+    prisma.invoice.findMany({
+      where,
+      include: {
+        workOrder: { select: { title: true, locationName: true } },
+        _count: { select: { lineItems: true } },
+      },
+      orderBy,
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.invoice.count({ where }),
+  ]);
+
+  return { data, total, page, totalPages: Math.ceil(total / limit) };
 }
 
 export async function getInvoice(id: string) {
@@ -75,7 +97,7 @@ export async function addLineItem(
 ) {
   const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId } });
   if (!invoice) throw new Error("Invoice not found");
-  if (invoice.status === "finalized") throw new Error("Cannot edit finalized invoice");
+  if (invoice.status === "void") throw new Error("Cannot edit voided invoice");
 
   const total = data.quantity * data.unitPrice;
   const item = await prisma.invoiceLineItem.create({
@@ -92,7 +114,7 @@ export async function removeLineItem(id: string) {
     include: { invoice: { select: { status: true } } },
   });
   if (!item) throw new Error("Line item not found");
-  if (item.invoice.status === "finalized") throw new Error("Cannot edit finalized invoice");
+  if (item.invoice.status === "void") throw new Error("Cannot edit voided invoice");
 
   await prisma.invoiceLineItem.delete({ where: { id } });
   await recalculateTotals(item.invoiceId);
@@ -100,11 +122,11 @@ export async function removeLineItem(id: string) {
 
 export async function updateInvoice(
   id: string,
-  data: { vendorName?: string; vendorAddress?: string; customerName?: string; customerAddress?: string; notes?: string; tax?: number }
+  data: { vendorName?: string; vendorAddress?: string; customerName?: string; customerAddress?: string; notes?: string; tax?: number; status?: string }
 ) {
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) throw new Error("Invoice not found");
-  if (invoice.status === "finalized") throw new Error("Cannot edit finalized invoice");
+  if (invoice.status === "void" && data.status !== "void") throw new Error("Cannot edit voided invoice");
 
   const updated = await prisma.invoice.update({ where: { id }, data });
   if (data.tax != null) await recalculateTotals(id);
@@ -114,9 +136,31 @@ export async function updateInvoice(
 export async function finalizeInvoice(id: string) {
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) throw new Error("Invoice not found");
-  if (invoice.status === "finalized") throw new Error("Already finalized");
 
   return prisma.invoice.update({ where: { id }, data: { status: "finalized" } });
+}
+
+export async function voidInvoice(id: string) {
+  const invoice = await prisma.invoice.findUnique({ where: { id } });
+  if (!invoice) throw new Error("Invoice not found");
+
+  return prisma.invoice.update({ where: { id }, data: { status: "void" } });
+}
+
+export async function getInvoiceStats(dateFrom?: Date, dateTo?: Date) {
+  const where: any = { status: { not: "void" } };
+  if (dateFrom) where.createdAt = { gte: dateFrom };
+  if (dateTo) {
+    where.createdAt = { ...where.createdAt, lt: dateTo };
+  }
+
+  const result = await prisma.invoice.aggregate({
+    where,
+    _sum: { total: true },
+    _count: true,
+  });
+
+  return { totalAmount: result._sum.total || 0, count: result._count };
 }
 
 async function recalculateTotals(invoiceId: string) {

@@ -114,18 +114,20 @@ export async function addComment(workOrderId: string, userId: string | null, con
   });
 }
 
-export async function getStats() {
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+export async function getStats(dateFrom?: Date, dateTo?: Date) {
+  const dateFilter: any = {};
+  if (dateFrom) dateFilter.gte = dateFrom;
+  if (dateTo) dateFilter.lt = dateTo;
+  const createdFilter = Object.keys(dateFilter).length > 0 ? { createdAt: dateFilter } : {};
 
-  const [pending, approved, inProgress, deferred, completedMonth, invoiced] = await Promise.all([
-    prisma.workOrder.count({ where: { status: "pending" } }),
-    prisma.workOrder.count({ where: { status: "approved" } }),
-    prisma.workOrder.count({ where: { status: "in_progress" } }),
-    prisma.workOrder.count({ where: { status: "deferred" } }),
-    prisma.workOrder.count({ where: { status: "completed", completedAt: { gte: monthStart } } }),
-    prisma.workOrder.count({ where: { status: "invoiced" } }),
+  const [pending, approved, inProgress, deferred, completed, invoiced] = await Promise.all([
+    prisma.workOrder.count({ where: { status: "pending", ...createdFilter } }),
+    prisma.workOrder.count({ where: { status: "approved", ...createdFilter } }),
+    prisma.workOrder.count({ where: { status: "in_progress", ...createdFilter } }),
+    prisma.workOrder.count({ where: { status: "deferred", ...createdFilter } }),
+    prisma.workOrder.count({ where: { status: "completed", ...createdFilter } }),
+    prisma.workOrder.count({ where: { status: "invoiced", ...createdFilter } }),
   ]);
 
-  return { pending, approved, inProgress, deferred, completed: completedMonth, invoiced };
+  return { pending, approved, inProgress, deferred, completed, invoiced };
 }

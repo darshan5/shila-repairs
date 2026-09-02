@@ -6,8 +6,14 @@ export async function GET(req: Request) {
   if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
-  const data = await getInvoices({ status: searchParams.get("status") || undefined });
-  return Response.json({ data });
+  const result = await getInvoices({
+    status: searchParams.get("status") || undefined,
+    search: searchParams.get("search") || undefined,
+    sortBy: searchParams.get("sortBy") || undefined,
+    page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined,
+    limit: searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined,
+  });
+  return Response.json(result);
 }
 
 export async function POST(req: Request) {
