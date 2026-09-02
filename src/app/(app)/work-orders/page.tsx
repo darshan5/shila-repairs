@@ -122,10 +122,6 @@ export default function WorkOrdersPage() {
             <RefreshCw className={`h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`} />
             Sync
           </button>
-          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600">
-            <Plus className="h-3.5 w-3.5" />
-            New Work Order
-          </button>
         </div>
       </div>
 
