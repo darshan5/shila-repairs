@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { RefreshCw, Plus, Wrench } from "lucide-react";
+import { RefreshCw, Plus, Wrench, Clock, Play, Pause, CheckCircle2, FileText, X } from "lucide-react";
+import { toast } from "sonner";
 
 type WO = {
   id: string; title: string; status: string; priority: string; source: string;
@@ -10,6 +11,8 @@ type WO = {
   _count: { comments: number };
   invoice: { id: string; invoiceNumber: string; status: string } | null;
 };
+
+type Stats = { pending: number; approved: number; inProgress: number; deferred: number; completed: number; invoiced: number };
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-slate-100 text-slate-700",
@@ -20,23 +23,36 @@ const STATUS_COLORS: Record<string, string> = {
   invoiced: "bg-teal-100 text-teal-700",
 };
 
-const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-blue-100 text-blue-700",
-  MEDIUM: "bg-yellow-100 text-yellow-800",
-  HIGH: "bg-orange-200 text-orange-800",
-  CRITICAL: "bg-red-200 text-red-800",
+const PRIORITY_PILLS: Record<string, string> = {
+  LOW: "bg-blue-200 text-blue-800",
+  MEDIUM: "bg-amber-200 text-amber-800",
+  HIGH: "bg-orange-400 text-white",
+  CRITICAL: "bg-red-500 text-white",
 };
+
+const KPI_ITEMS = [
+  { key: "pending", label: "Pending", icon: Clock, color: "text-slate-500" },
+  { key: "approved", label: "Approved", icon: CheckCircle2, color: "text-blue-500" },
+  { key: "inProgress", label: "In Progress", icon: Play, color: "text-amber-500" },
+  { key: "deferred", label: "Deferred", icon: Pause, color: "text-purple-500" },
+  { key: "completed", label: "Completed", icon: CheckCircle2, color: "text-emerald-500" },
+  { key: "invoiced", label: "Invoiced", icon: FileText, color: "text-teal-500" },
+];
 
 export default function WorkOrdersPage() {
   const [workOrders, setWorkOrders] = useState<WO[]>([]);
+  const [stats, setStats] = useState<Stats>({ pending: 0, approved: 0, inProgress: 0, deferred: 0, completed: 0, invoiced: 0 });
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [syncing, setSyncing] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => { fetchWorkOrders(); }, [statusFilter, priorityFilter]);
+  useEffect(() => { fetchWorkOrders(); fetchStats(); }, [statusFilter, priorityFilter]);
 
   async function fetchWorkOrders() {
     setLoading(true);
@@ -48,22 +64,52 @@ export default function WorkOrdersPage() {
     setLoading(false);
   }
 
+  async function fetchStats() {
+    const res = await fetch("/api/work-orders?stats=true");
+    if (res.ok) { const { data } = await res.json(); if (data.pending !== undefined) setStats(data); }
+  }
+
   async function handleSync() {
     setSyncing(true);
     const res = await fetch("/api/sync", { method: "POST" });
     setSyncing(false);
-    if (res.ok) { fetchWorkOrders(); }
-    else { const { error } = await res.json(); alert(error); }
+    if (res.ok) {
+      const { data } = await res.json();
+      toast.success(`Synced: ${data.synced || 0} work orders`);
+      fetchWorkOrders(); fetchStats();
+    } else {
+      const { error } = await res.json();
+      toast.error(error || "Sync failed");
+    }
   }
 
-  async function handleCreate() {
-    if (!newTitle.trim()) return;
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!createForm.title.trim()) return;
+    setSubmitting(true);
+    const payload: any = { title: createForm.title, priority: createForm.priority };
+    if (createForm.description) payload.description = createForm.description;
+    if (createForm.locationName) payload.locationName = createForm.locationName;
+    if (createForm.equipmentName) payload.equipmentName = createForm.equipmentName;
+    if (createForm.estimatedCost) payload.estimatedCost = parseFloat(createForm.estimatedCost);
+    if (createForm.notes) payload.notes = createForm.notes;
+
     const res = await fetch("/api/work-orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newTitle }),
+      body: JSON.stringify(payload),
     });
-    if (res.ok) { setNewTitle(""); setCreating(false); fetchWorkOrders(); }
+    setSubmitting(false);
+    if (res.ok) {
+      toast.success("Work order created");
+      setCreateOpen(false);
+      setCreateForm({ title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "" });
+      fetchWorkOrders(); fetchStats();
+    }
+  }
+
+  function formatDate(d: string) {
+    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   return (
@@ -71,34 +117,37 @@ export default function WorkOrdersPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Work Orders</h1>
         <div className="flex gap-2">
-          <button onClick={handleSync} disabled={syncing} className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:opacity-50">
+          <button onClick={handleSync} disabled={syncing} className="flex items-center gap-1.5 rounded-lg border border-amber-300 px-3 py-1.5 text-sm text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50">
             <RefreshCw className={`h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`} />
             Sync
           </button>
-          <button onClick={() => setCreating(true)} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600">
+          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600">
             <Plus className="h-3.5 w-3.5" />
-            New
+            New Work Order
           </button>
         </div>
       </div>
 
-      {creating && (
-        <div className="flex gap-2 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
-          <input
-            autoFocus
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Work order title..."
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-amber-500"
-            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          />
-          <button onClick={handleCreate} className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600">Create</button>
-          <button onClick={() => setCreating(false)} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">Cancel</button>
-        </div>
-      )}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        {KPI_ITEMS.map(kpi => {
+          const Icon = kpi.icon;
+          const val = stats[kpi.key as keyof Stats] ?? 0;
+          return (
+            <div key={kpi.key} className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <Icon className={`h-3.5 w-3.5 ${kpi.color}`} />
+                {kpi.label}
+              </div>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{val}</p>
+            </div>
+          );
+        })}
+      </div>
 
+      {/* Filters */}
       <div className="flex gap-2">
-        <select className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-amber-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <select className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-amber-500" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
@@ -107,7 +156,7 @@ export default function WorkOrdersPage() {
           <option value="completed">Completed</option>
           <option value="invoiced">Invoiced</option>
         </select>
-        <select className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-amber-500" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+        <select className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-amber-500" value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
           <option value="">All Priorities</option>
           <option value="LOW">Low</option>
           <option value="MEDIUM">Medium</option>
@@ -116,6 +165,7 @@ export default function WorkOrdersPage() {
         </select>
       </div>
 
+      {/* Work Order List */}
       {loading ? (
         <p className="py-8 text-center text-slate-400">Loading...</p>
       ) : workOrders.length === 0 ? (
@@ -124,44 +174,135 @@ export default function WorkOrdersPage() {
           No work orders found.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Title</th>
-                <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Location</th>
-                <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Equipment</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Priority</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Source</th>
-                <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {workOrders.map(wo => (
-                <tr key={wo.id} className="border-b border-slate-100 last:border-b-0 transition-colors hover:bg-amber-50/40">
-                  <td className="px-3 py-2.5">
-                    <Link href={`/work-orders/${wo.id}`} className="font-medium text-slate-900 hover:text-amber-600 hover:underline">{wo.title}</Link>
-                  </td>
-                  <td className="px-3 py-2.5 text-slate-500">{wo.locationName || "—"}</td>
-                  <td className="px-3 py-2.5 text-slate-500">{wo.equipmentName || "—"}</td>
-                  <td className="px-3 py-2.5 text-center">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${PRIORITY_COLORS[wo.priority]}`}>{wo.priority}</span>
-                  </td>
-                  <td className="px-3 py-2.5 text-center">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[wo.status]}`}>{wo.status.replace("_", " ")}</span>
-                  </td>
-                  <td className="px-3 py-2.5 text-center">
-                    <span className={`text-xs font-medium ${wo.source === "walkthefloor" ? "text-amber-600" : "text-slate-400"}`}>
-                      {wo.source === "walkthefloor" ? "WTF" : "Local"}
+        <div className="space-y-2">
+          {workOrders.map(wo => (
+            <Link key={wo.id} href={`/work-orders/${wo.id}`} className="block">
+              <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-amber-200 hover:shadow-md">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium text-sm text-slate-900">{wo.title}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${STATUS_COLORS[wo.status]}`}>
+                      {wo.status.replace("_", " ")}
                     </span>
-                  </td>
-                  <td className="px-3 py-2.5 text-right text-slate-400">{new Date(wo.createdAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${PRIORITY_PILLS[wo.priority]}`}>
+                      {wo.priority}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                    {wo.locationName && <span>{wo.locationName}</span>}
+                    {wo.equipmentName && <span className="flex items-center gap-0.5"><Wrench className="h-3 w-3" />{wo.equipmentName}</span>}
+                    <span>{formatDate(wo.createdAt)}</span>
+                    {wo.source === "walkthefloor" && <span className="text-amber-600 font-medium">WTF</span>}
+                    {wo.invoice && <span className="text-teal-600"><FileText className="h-3 w-3 inline" /> #{wo.invoice.invoiceNumber}</span>}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
+      )}
+
+      {/* Create Work Order Panel */}
+      {createOpen && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setCreateOpen(false)} />
+          <div className="fixed inset-0 md:inset-y-0 md:left-auto md:right-0 z-50 md:w-full md:max-w-lg bg-white md:border-l md:shadow-xl overflow-y-auto">
+            <div className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-slate-900">New Work Order</h2>
+                <button onClick={() => setCreateOpen(false)} className="p-1 rounded hover:bg-slate-100">
+                  <X className="h-5 w-5 text-slate-400" />
+                </button>
+              </div>
+              <form onSubmit={handleCreate} className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Title *</label>
+                  <input
+                    value={createForm.title}
+                    onChange={e => setCreateForm({ ...createForm, title: e.target.value })}
+                    placeholder="e.g., Walk-in cooler not cooling"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Description</label>
+                  <textarea
+                    value={createForm.description}
+                    onChange={e => setCreateForm({ ...createForm, description: e.target.value })}
+                    placeholder="Details about the issue..."
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Priority</label>
+                    <select
+                      value={createForm.priority}
+                      onChange={e => setCreateForm({ ...createForm, priority: e.target.value })}
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    >
+                      <option value="LOW">Low</option>
+                      <option value="MEDIUM">Medium</option>
+                      <option value="HIGH">High</option>
+                      <option value="CRITICAL">Critical</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Estimated Cost</label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="$0.00"
+                      value={createForm.estimatedCost}
+                      onChange={e => setCreateForm({ ...createForm, estimatedCost: e.target.value })}
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Location</label>
+                    <input
+                      value={createForm.locationName}
+                      onChange={e => setCreateForm({ ...createForm, locationName: e.target.value })}
+                      placeholder="e.g., Main Store"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Equipment</label>
+                    <input
+                      value={createForm.equipmentName}
+                      onChange={e => setCreateForm({ ...createForm, equipmentName: e.target.value })}
+                      placeholder="e.g., Walk-in Cooler"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Notes</label>
+                  <textarea
+                    value={createForm.notes}
+                    onChange={e => setCreateForm({ ...createForm, notes: e.target.value })}
+                    placeholder="Additional notes..."
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    rows={2}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={submitting || !createForm.title.trim()}
+                  className="w-full rounded-lg bg-amber-500 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
+                >
+                  {submitting ? "Creating..." : "Create Work Order"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,11 +1,15 @@
 import { auth } from "@/lib/auth";
-import { getWorkOrders, createWorkOrder } from "@/lib/services/work-order-service";
+import { getWorkOrders, createWorkOrder, getStats } from "@/lib/services/work-order-service";
 
 export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
+  if (searchParams.get("stats") === "true") {
+    const data = await getStats();
+    return Response.json({ data });
+  }
   const data = await getWorkOrders({
     status: searchParams.get("status") || undefined,
     priority: searchParams.get("priority") || undefined,
