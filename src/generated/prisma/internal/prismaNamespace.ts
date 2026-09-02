@@ -998,6 +998,7 @@ export const AppConfigScalarFieldEnum = {
   id: 'id',
   walkTheFloorUrl: 'walkTheFloorUrl',
   walkTheFloorApiKey: 'walkTheFloorApiKey',
+  hourlyRate: 'hourlyRate',
   lastSyncAt: 'lastSyncAt',
   lastSyncError: 'lastSyncError',
   createdAt: 'createdAt',

@@ -610,14 +610,6 @@ export type InvoiceUncheckedUpdateOneWithoutWorkOrderNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.InvoiceUpdateToOneWithWhereWithoutWorkOrderInput, Prisma.InvoiceUpdateWithoutWorkOrderInput>, Prisma.InvoiceUncheckedUpdateWithoutWorkOrderInput>
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type InvoiceCreateNestedOneWithoutLineItemsInput = {
   create?: Prisma.XOR<Prisma.InvoiceCreateWithoutLineItemsInput, Prisma.InvoiceUncheckedCreateWithoutLineItemsInput>
   connectOrCreate?: Prisma.InvoiceCreateOrConnectWithoutLineItemsInput

@@ -20,14 +20,25 @@ export type AppConfigModel = runtime.Types.Result.DefaultSelection<Prisma.$AppCo
 
 export type AggregateAppConfig = {
   _count: AppConfigCountAggregateOutputType | null
+  _avg: AppConfigAvgAggregateOutputType | null
+  _sum: AppConfigSumAggregateOutputType | null
   _min: AppConfigMinAggregateOutputType | null
   _max: AppConfigMaxAggregateOutputType | null
+}
+
+export type AppConfigAvgAggregateOutputType = {
+  hourlyRate: number | null
+}
+
+export type AppConfigSumAggregateOutputType = {
+  hourlyRate: number | null
 }
 
 export type AppConfigMinAggregateOutputType = {
   id: string | null
   walkTheFloorUrl: string | null
   walkTheFloorApiKey: string | null
+  hourlyRate: number | null
   lastSyncAt: Date | null
   lastSyncError: string | null
   createdAt: Date | null
@@ -38,6 +49,7 @@ export type AppConfigMaxAggregateOutputType = {
   id: string | null
   walkTheFloorUrl: string | null
   walkTheFloorApiKey: string | null
+  hourlyRate: number | null
   lastSyncAt: Date | null
   lastSyncError: string | null
   createdAt: Date | null
@@ -48,6 +60,7 @@ export type AppConfigCountAggregateOutputType = {
   id: number
   walkTheFloorUrl: number
   walkTheFloorApiKey: number
+  hourlyRate: number
   lastSyncAt: number
   lastSyncError: number
   createdAt: number
@@ -56,10 +69,19 @@ export type AppConfigCountAggregateOutputType = {
 }
 
 
+export type AppConfigAvgAggregateInputType = {
+  hourlyRate?: true
+}
+
+export type AppConfigSumAggregateInputType = {
+  hourlyRate?: true
+}
+
 export type AppConfigMinAggregateInputType = {
   id?: true
   walkTheFloorUrl?: true
   walkTheFloorApiKey?: true
+  hourlyRate?: true
   lastSyncAt?: true
   lastSyncError?: true
   createdAt?: true
@@ -70,6 +92,7 @@ export type AppConfigMaxAggregateInputType = {
   id?: true
   walkTheFloorUrl?: true
   walkTheFloorApiKey?: true
+  hourlyRate?: true
   lastSyncAt?: true
   lastSyncError?: true
   createdAt?: true
@@ -80,6 +103,7 @@ export type AppConfigCountAggregateInputType = {
   id?: true
   walkTheFloorUrl?: true
   walkTheFloorApiKey?: true
+  hourlyRate?: true
   lastSyncAt?: true
   lastSyncError?: true
   createdAt?: true
@@ -125,6 +149,18 @@ export type AppConfigAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AppConfigAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AppConfigSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AppConfigMinAggregateInputType
@@ -155,6 +191,8 @@ export type AppConfigGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   _count?: AppConfigCountAggregateInputType | true
+  _avg?: AppConfigAvgAggregateInputType
+  _sum?: AppConfigSumAggregateInputType
   _min?: AppConfigMinAggregateInputType
   _max?: AppConfigMaxAggregateInputType
 }
@@ -163,11 +201,14 @@ export type AppConfigGroupByOutputType = {
   id: string
   walkTheFloorUrl: string
   walkTheFloorApiKey: string | null
+  hourlyRate: number
   lastSyncAt: Date | null
   lastSyncError: string | null
   createdAt: Date
   updatedAt: Date
   _count: AppConfigCountAggregateOutputType | null
+  _avg: AppConfigAvgAggregateOutputType | null
+  _sum: AppConfigSumAggregateOutputType | null
   _min: AppConfigMinAggregateOutputType | null
   _max: AppConfigMaxAggregateOutputType | null
 }
@@ -194,6 +235,7 @@ export type AppConfigWhereInput = {
   id?: Prisma.StringFilter<"AppConfig"> | string
   walkTheFloorUrl?: Prisma.StringFilter<"AppConfig"> | string
   walkTheFloorApiKey?: Prisma.StringNullableFilter<"AppConfig"> | string | null
+  hourlyRate?: Prisma.FloatFilter<"AppConfig"> | number
   lastSyncAt?: Prisma.DateTimeNullableFilter<"AppConfig"> | Date | string | null
   lastSyncError?: Prisma.StringNullableFilter<"AppConfig"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AppConfig"> | Date | string
@@ -204,6 +246,7 @@ export type AppConfigOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   walkTheFloorUrl?: Prisma.SortOrder
   walkTheFloorApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  hourlyRate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastSyncError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -217,6 +260,7 @@ export type AppConfigWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AppConfigWhereInput | Prisma.AppConfigWhereInput[]
   walkTheFloorUrl?: Prisma.StringFilter<"AppConfig"> | string
   walkTheFloorApiKey?: Prisma.StringNullableFilter<"AppConfig"> | string | null
+  hourlyRate?: Prisma.FloatFilter<"AppConfig"> | number
   lastSyncAt?: Prisma.DateTimeNullableFilter<"AppConfig"> | Date | string | null
   lastSyncError?: Prisma.StringNullableFilter<"AppConfig"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AppConfig"> | Date | string
@@ -227,13 +271,16 @@ export type AppConfigOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   walkTheFloorUrl?: Prisma.SortOrder
   walkTheFloorApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  hourlyRate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastSyncError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AppConfigCountOrderByAggregateInput
+  _avg?: Prisma.AppConfigAvgOrderByAggregateInput
   _max?: Prisma.AppConfigMaxOrderByAggregateInput
   _min?: Prisma.AppConfigMinOrderByAggregateInput
+  _sum?: Prisma.AppConfigSumOrderByAggregateInput
 }
 
 export type AppConfigScalarWhereWithAggregatesInput = {
@@ -243,6 +290,7 @@ export type AppConfigScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"AppConfig"> | string
   walkTheFloorUrl?: Prisma.StringWithAggregatesFilter<"AppConfig"> | string
   walkTheFloorApiKey?: Prisma.StringNullableWithAggregatesFilter<"AppConfig"> | string | null
+  hourlyRate?: Prisma.FloatWithAggregatesFilter<"AppConfig"> | number
   lastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AppConfig"> | Date | string | null
   lastSyncError?: Prisma.StringNullableWithAggregatesFilter<"AppConfig"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AppConfig"> | Date | string
@@ -253,6 +301,7 @@ export type AppConfigCreateInput = {
   id?: string
   walkTheFloorUrl?: string
   walkTheFloorApiKey?: string | null
+  hourlyRate?: number
   lastSyncAt?: Date | string | null
   lastSyncError?: string | null
   createdAt?: Date | string
@@ -263,6 +312,7 @@ export type AppConfigUncheckedCreateInput = {
   id?: string
   walkTheFloorUrl?: string
   walkTheFloorApiKey?: string | null
+  hourlyRate?: number
   lastSyncAt?: Date | string | null
   lastSyncError?: string | null
   createdAt?: Date | string
@@ -273,6 +323,7 @@ export type AppConfigUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorUrl?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastSyncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -283,6 +334,7 @@ export type AppConfigUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorUrl?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastSyncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -293,6 +345,7 @@ export type AppConfigCreateManyInput = {
   id?: string
   walkTheFloorUrl?: string
   walkTheFloorApiKey?: string | null
+  hourlyRate?: number
   lastSyncAt?: Date | string | null
   lastSyncError?: string | null
   createdAt?: Date | string
@@ -303,6 +356,7 @@ export type AppConfigUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorUrl?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastSyncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -313,6 +367,7 @@ export type AppConfigUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorUrl?: Prisma.StringFieldUpdateOperationsInput | string
   walkTheFloorApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastSyncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -323,16 +378,22 @@ export type AppConfigCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   walkTheFloorUrl?: Prisma.SortOrder
   walkTheFloorApiKey?: Prisma.SortOrder
+  hourlyRate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   lastSyncError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type AppConfigAvgOrderByAggregateInput = {
+  hourlyRate?: Prisma.SortOrder
+}
+
 export type AppConfigMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   walkTheFloorUrl?: Prisma.SortOrder
   walkTheFloorApiKey?: Prisma.SortOrder
+  hourlyRate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   lastSyncError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -343,14 +404,27 @@ export type AppConfigMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   walkTheFloorUrl?: Prisma.SortOrder
   walkTheFloorApiKey?: Prisma.SortOrder
+  hourlyRate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   lastSyncError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type AppConfigSumOrderByAggregateInput = {
+  hourlyRate?: Prisma.SortOrder
+}
+
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -363,6 +437,7 @@ export type AppConfigSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   id?: boolean
   walkTheFloorUrl?: boolean
   walkTheFloorApiKey?: boolean
+  hourlyRate?: boolean
   lastSyncAt?: boolean
   lastSyncError?: boolean
   createdAt?: boolean
@@ -373,6 +448,7 @@ export type AppConfigSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   walkTheFloorUrl?: boolean
   walkTheFloorApiKey?: boolean
+  hourlyRate?: boolean
   lastSyncAt?: boolean
   lastSyncError?: boolean
   createdAt?: boolean
@@ -383,6 +459,7 @@ export type AppConfigSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   walkTheFloorUrl?: boolean
   walkTheFloorApiKey?: boolean
+  hourlyRate?: boolean
   lastSyncAt?: boolean
   lastSyncError?: boolean
   createdAt?: boolean
@@ -393,13 +470,14 @@ export type AppConfigSelectScalar = {
   id?: boolean
   walkTheFloorUrl?: boolean
   walkTheFloorApiKey?: boolean
+  hourlyRate?: boolean
   lastSyncAt?: boolean
   lastSyncError?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AppConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "walkTheFloorUrl" | "walkTheFloorApiKey" | "lastSyncAt" | "lastSyncError" | "createdAt" | "updatedAt", ExtArgs["result"]["appConfig"]>
+export type AppConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "walkTheFloorUrl" | "walkTheFloorApiKey" | "hourlyRate" | "lastSyncAt" | "lastSyncError" | "createdAt" | "updatedAt", ExtArgs["result"]["appConfig"]>
 
 export type $AppConfigPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AppConfig"
@@ -408,6 +486,7 @@ export type $AppConfigPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     walkTheFloorUrl: string
     walkTheFloorApiKey: string | null
+    hourlyRate: number
     lastSyncAt: Date | null
     lastSyncError: string | null
     createdAt: Date
@@ -838,6 +917,7 @@ export interface AppConfigFieldRefs {
   readonly id: Prisma.FieldRef<"AppConfig", 'String'>
   readonly walkTheFloorUrl: Prisma.FieldRef<"AppConfig", 'String'>
   readonly walkTheFloorApiKey: Prisma.FieldRef<"AppConfig", 'String'>
+  readonly hourlyRate: Prisma.FieldRef<"AppConfig", 'Float'>
   readonly lastSyncAt: Prisma.FieldRef<"AppConfig", 'DateTime'>
   readonly lastSyncError: Prisma.FieldRef<"AppConfig", 'String'>
   readonly createdAt: Prisma.FieldRef<"AppConfig", 'DateTime'>

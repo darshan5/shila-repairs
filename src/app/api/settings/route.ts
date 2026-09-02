@@ -14,6 +14,7 @@ export async function GET() {
     data: {
       walkTheFloorUrl: config.walkTheFloorUrl,
       hasApiKey: !!config.walkTheFloorApiKey,
+      hourlyRate: config.hourlyRate,
       lastSyncAt: config.lastSyncAt,
       lastSyncError: config.lastSyncError,
     },
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   const data: any = {};
   if (body.walkTheFloorUrl) data.walkTheFloorUrl = body.walkTheFloorUrl;
   if (body.walkTheFloorApiKey) data.walkTheFloorApiKey = body.walkTheFloorApiKey;
+  if (body.hourlyRate !== undefined) data.hourlyRate = body.hourlyRate;
 
   const config = await prisma.appConfig.upsert({
     where: { id: "config" },
@@ -36,6 +38,10 @@ export async function POST(req: Request) {
   });
 
   return Response.json({
-    data: { walkTheFloorUrl: config.walkTheFloorUrl, hasApiKey: !!config.walkTheFloorApiKey },
+    data: {
+      walkTheFloorUrl: config.walkTheFloorUrl,
+      hasApiKey: !!config.walkTheFloorApiKey,
+      hourlyRate: config.hourlyRate,
+    },
   });
 }

@@ -33,8 +33,12 @@ export default function InvoiceDetailPage() {
   const [newQty, setNewQty] = useState("1");
   const [newPrice, setNewPrice] = useState("");
   const [newCategory, setNewCategory] = useState("labor");
+  const [hourlyRate, setHourlyRate] = useState(0);
 
-  useEffect(() => { fetchInvoice(); }, [id]);
+  useEffect(() => {
+    fetchInvoice();
+    fetch("/api/settings").then(r => r.json()).then(({ data }) => { setHourlyRate(data.hourlyRate || 0); if (data.hourlyRate > 0) setNewPrice(data.hourlyRate.toString()); });
+  }, [id]);
 
   async function fetchInvoice() {
     setLoading(true);
@@ -87,7 +91,8 @@ export default function InvoiceDetailPage() {
   if (loading || !inv) return <p className="py-8 text-center text-slate-400">Loading...</p>;
 
   const isDraft = inv.status === "draft";
-  const categoryColors: Record<string, string> = { labor: "bg-blue-100 text-blue-700", parts: "bg-green-100 text-green-700", materials: "bg-amber-100 text-amber-700" };
+  const categoryColors: Record<string, string> = { labor: "bg-blue-100 text-blue-700", parts: "bg-green-100 text-green-700", materials: "bg-amber-100 text-amber-700", trip_charge: "bg-purple-100 text-purple-700" };
+  const categoryLabels: Record<string, string> = { labor: "Labor", parts: "Parts", materials: "Materials", trip_charge: "Trip Charge" };
 
   return (
     <div className="max-w-3xl space-y-6 print:max-w-none print:space-y-4">
@@ -188,7 +193,7 @@ export default function InvoiceDetailPage() {
               <tr key={item.id} className="border-b last:border-b-0">
                 <td className="px-3 py-2">{item.description}</td>
                 <td className="px-3 py-2 text-center">
-                  <span className={`rounded-full px-2 py-0.5 text-xs ${categoryColors[item.category] || "bg-gray-100"}`}>{item.category}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-xs ${categoryColors[item.category] || "bg-gray-100"}`}>{categoryLabels[item.category] || item.category}</span>
                 </td>
                 <td className="px-3 py-2 text-right">{item.quantity}</td>
                 <td className="px-3 py-2 text-right">${item.unitPrice.toFixed(2)}</td>
@@ -207,10 +212,11 @@ export default function InvoiceDetailPage() {
         {isDraft && (
           <div className="flex gap-2 border-t p-3 print:hidden">
             <input value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="Description" className="flex-1 rounded border px-2 py-1 text-sm" />
-            <select value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="rounded border px-2 py-1 text-sm">
-              <option value="labor">Labor</option>
+            <select value={newCategory} onChange={(e) => { setNewCategory(e.target.value); if (e.target.value === "labor" && hourlyRate > 0) setNewPrice(hourlyRate.toString()); }} className="rounded border px-2 py-1 text-sm">
+              <option value="labor">Labor (hrs × ${hourlyRate}/hr)</option>
               <option value="parts">Parts</option>
               <option value="materials">Materials</option>
+              <option value="trip_charge">Trip Charge</option>
             </select>
             <input type="number" value={newQty} onChange={(e) => setNewQty(e.target.value)} className="w-16 rounded border px-2 py-1 text-sm text-right" />
             <input type="number" step="0.01" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="Price" className="w-24 rounded border px-2 py-1 text-sm text-right" />

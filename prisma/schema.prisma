@@ -22,6 +22,7 @@ model AppConfig {
   id                 String    @id @default("config")
   walkTheFloorUrl    String    @default("https://walkthefloor.com")
   walkTheFloorApiKey String?
+  hourlyRate         Float     @default(0)
   lastSyncAt         DateTime?
   lastSyncError      String?
   createdAt          DateTime  @default(now())

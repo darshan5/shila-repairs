@@ -9,6 +9,7 @@ export default function SettingsPage() {
   const [hasApiKey, setHasApiKey] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [hourlyRate, setHourlyRate] = useState("");
   const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
@@ -16,6 +17,7 @@ export default function SettingsPage() {
     fetch("/api/settings").then(r => r.json()).then(({ data }) => {
       setUrl(data.walkTheFloorUrl || "https://walkthefloor.com");
       setHasApiKey(data.hasApiKey);
+      setHourlyRate(data.hourlyRate?.toString() || "0");
       setLastSync(data.lastSyncAt);
       setLastError(data.lastSyncError);
     });
@@ -23,7 +25,7 @@ export default function SettingsPage() {
 
   async function handleSave() {
     setSaving(true);
-    const body: any = { walkTheFloorUrl: url };
+    const body: any = { walkTheFloorUrl: url, hourlyRate: parseFloat(hourlyRate) || 0 };
     if (apiKey.trim()) body.walkTheFloorApiKey = apiKey;
     const res = await fetch("/api/settings", {
       method: "POST",
@@ -75,6 +77,20 @@ export default function SettingsPage() {
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder={hasApiKey ? "Enter new key to replace..." : "Enter API key (wtf_live_...)"}
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-slate-700">Hourly Rate ($)</label>
+          <p className="text-xs text-slate-400 mb-1">Used to auto-calculate labor costs on invoices</p>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={hourlyRate}
+            onChange={(e) => setHourlyRate(e.target.value)}
+            placeholder="0.00"
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
           />
         </div>
