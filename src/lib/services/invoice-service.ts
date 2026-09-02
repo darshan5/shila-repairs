@@ -14,13 +14,28 @@ export async function createInvoice(workOrderId: string) {
   const existing = await prisma.invoice.findUnique({ where: { workOrderId } });
   if (existing) throw new Error("Invoice already exists for this work order");
 
+  const cost = wo.actualCost || wo.estimatedCost || 0;
+
   const invoice = await prisma.invoice.create({
     data: {
       invoiceNumber: generateInvoiceNumber(),
       workOrderId,
       customerName: wo.locationName || "",
-      subtotal: wo.actualCost || wo.estimatedCost || 0,
-      total: wo.actualCost || wo.estimatedCost || 0,
+      customerAddress: wo.equipmentName ? `Equipment: ${wo.equipmentName}` : "",
+      subtotal: cost,
+      total: cost,
+      notes: wo.notes || wo.description || "",
+      lineItems: {
+        create: [
+          {
+            description: wo.title,
+            quantity: 1,
+            unitPrice: cost,
+            total: cost,
+            category: "labor",
+          },
+        ],
+      },
     },
     include: { lineItems: true, workOrder: { select: { title: true, locationName: true } } },
   });

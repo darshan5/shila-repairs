@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { BottomNav, MobileHeader } from "@/components/mobile-nav";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -28,6 +29,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex h-screen">
+      {/* Desktop Sidebar */}
       <aside className="hidden w-56 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
         <div className="flex h-14 items-center gap-2 border-b px-4">
           <Wrench className="h-5 w-5 text-amber-600" />
@@ -48,9 +50,7 @@ export default async function AppLayout({
           ))}
         </nav>
         <div className="border-t p-3">
-          <div className="px-3 py-2 text-xs text-slate-400">
-            Signed in as
-          </div>
+          <div className="px-3 py-2 text-xs text-slate-400">Signed in as</div>
           <div className="px-3 text-sm font-medium text-slate-700">
             {session.user.name}
           </div>
@@ -65,16 +65,23 @@ export default async function AppLayout({
       </aside>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6">
-          <div className="flex items-center gap-2 md:hidden">
-            <Wrench className="h-5 w-5 text-amber-500" />
-            <span className="font-bold text-slate-900">Shila Repairs</span>
+        {/* Header */}
+        <header className="flex h-14 items-center border-b border-slate-200 bg-white px-4 md:px-6">
+          <MobileHeader userName={session.user.name || "User"} />
+          <div className="hidden md:block">
+            <span className="text-sm font-medium text-slate-600">
+              {session.user.name}
+            </span>
           </div>
-          <span className="text-sm font-medium text-slate-600">{session.user.name}</span>
         </header>
-        <main className="flex-1 overflow-y-auto bg-slate-50">
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto bg-slate-50 pb-16 md:pb-0">
           <div className="mx-auto max-w-6xl p-4 md:p-6">{children}</div>
         </main>
+
+        {/* Mobile Bottom Nav */}
+        <BottomNav />
       </div>
     </div>
   );
