@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-type Comment = { id: string; userId: string | null; content: string; createdAt: string };
+type Comment = { id: string; userId: string | null; userName: string | null; content: string; createdAt: string };
 type WODetail = {
   id: string; title: string; description: string | null; priority: string; status: string;
   source: string; locationName: string | null; equipmentName: string | null; equipmentType: string | null;
@@ -54,6 +54,9 @@ export default function WorkOrderDetailPage() {
   const [completeOpen, setCompleteOpen] = useState(false);
   const [completeActualCost, setCompleteActualCost] = useState("");
   const [completeNotes, setCompleteNotes] = useState("");
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "" });
 
   useEffect(() => { fetchWO(); }, [id]);
 
@@ -112,6 +115,33 @@ export default function WorkOrderDetailPage() {
     }
   }
 
+  function openEdit() {
+    if (!wo) return;
+    setEditForm({
+      title: wo.title, description: wo.description || "", priority: wo.priority,
+      locationName: wo.locationName || "", equipmentName: wo.equipmentName || "",
+      estimatedCost: wo.estimatedCost?.toString() || "", notes: wo.notes || "",
+    });
+    setEditOpen(true);
+  }
+
+  async function handleEditSave() {
+    setActionLoading(true);
+    const payload: any = {
+      title: editForm.title, description: editForm.description || null,
+      priority: editForm.priority, locationName: editForm.locationName || null,
+      equipmentName: editForm.equipmentName || null, notes: editForm.notes || null,
+    };
+    if (editForm.estimatedCost) payload.estimatedCost = parseFloat(editForm.estimatedCost);
+    const res = await fetch(`/api/work-orders/${id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    setActionLoading(false);
+    if (res.ok) { toast.success("Updated"); setEditOpen(false); fetchWO(); }
+    else { const { error } = await res.json(); toast.error(error); }
+  }
+
   function formatDate(d: string) {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   }
@@ -156,16 +186,24 @@ export default function WorkOrderDetailPage() {
               <Play className="h-4 w-4" />Start Work
             </button>
           )}
+          {wo.status === "deferred" && (
+            <button onClick={() => handleStatus("in_progress")} disabled={actionLoading} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-600 disabled:opacity-50">
+              <Play className="h-4 w-4" />Resume
+            </button>
+          )}
           {wo.status !== "deferred" && (
             <button onClick={() => setDeferOpen(!deferOpen)} className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
               <Pause className="h-4 w-4" />Defer
             </button>
           )}
-          {wo.status === "in_progress" && (
+          {(wo.status === "in_progress" || wo.status === "approved" || wo.status === "pending") && (
             <button onClick={() => setCompleteOpen(!completeOpen)} className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">
               <CheckCircle2 className="h-4 w-4" />Complete
             </button>
           )}
+          <button onClick={openEdit} className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            Edit Details
+          </button>
         </div>
       )}
 
@@ -227,6 +265,54 @@ export default function WorkOrderDetailPage() {
           <p className="text-sm font-medium text-purple-800">Deferred</p>
           <p className="text-sm text-purple-700">Expected start: {formatDate(wo.deferredDate)}</p>
           {wo.deferredReason && <p className="text-sm text-purple-600 mt-0.5">{wo.deferredReason}</p>}
+        </div>
+      )}
+
+      {/* Edit Form */}
+      {editOpen && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-amber-800">Edit Work Order</h3>
+          <div>
+            <label className="text-sm text-slate-700">Title</label>
+            <input value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label className="text-sm text-slate-700">Description</label>
+            <textarea value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} rows={2} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-slate-700">Priority</label>
+              <select value={editForm.priority} onChange={e => setEditForm({ ...editForm, priority: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-slate-700">Estimated Cost</label>
+              <input type="number" min="0" step="0.01" value={editForm.estimatedCost} onChange={e => setEditForm({ ...editForm, estimatedCost: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-slate-700">Location</label>
+              <input value={editForm.locationName} onChange={e => setEditForm({ ...editForm, locationName: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+            </div>
+            <div>
+              <label className="text-sm text-slate-700">Equipment</label>
+              <input value={editForm.equipmentName} onChange={e => setEditForm({ ...editForm, equipmentName: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+            </div>
+          </div>
+          <div>
+            <label className="text-sm text-slate-700">Notes</label>
+            <textarea value={editForm.notes} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} rows={2} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500" />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleEditSave} disabled={!editForm.title.trim() || actionLoading} className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50">Save</button>
+            <button onClick={() => setEditOpen(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50">Cancel</button>
+          </div>
         </div>
       )}
 
@@ -298,7 +384,10 @@ export default function WorkOrderDetailPage() {
             {wo.comments.map(c => (
               <div key={c.id} className="rounded-lg bg-slate-50 p-3">
                 <p className="text-sm text-slate-700">{c.content}</p>
-                <p className="mt-1 text-xs text-slate-400">{new Date(c.createdAt).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {c.userName && <span className="font-medium text-slate-500">{c.userName} &middot; </span>}
+                  {new Date(c.createdAt).toLocaleString()}
+                </p>
               </div>
             ))}
           </div>

@@ -21,13 +21,28 @@ export async function getWorkOrders(filters: {
 }
 
 export async function getWorkOrder(id: string) {
-  return prisma.workOrder.findUnique({
+  const wo = await prisma.workOrder.findUnique({
     where: { id },
     include: {
       comments: { orderBy: { createdAt: "asc" } },
       invoice: { select: { id: true, invoiceNumber: true, status: true } },
     },
   });
+  if (!wo) return null;
+
+  const userIds = wo.comments.map(c => c.userId).filter(Boolean) as string[];
+  const users = userIds.length > 0
+    ? await prisma.user.findMany({ where: { id: { in: [...new Set(userIds)] } }, select: { id: true, name: true } })
+    : [];
+  const userMap = new Map(users.map(u => [u.id, u.name]));
+
+  return {
+    ...wo,
+    comments: wo.comments.map(c => ({
+      ...c,
+      userName: c.userId ? userMap.get(c.userId) || null : null,
+    })),
+  };
 }
 
 export async function createWorkOrder(data: {
