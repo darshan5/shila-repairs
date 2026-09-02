@@ -183,32 +183,22 @@ export default function TasksPage() {
     <div className="space-y-3 pb-20">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="hidden md:flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
-        >
-          <Plus className="h-4 w-4" />
-          New Task
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600">
+            <Plus className="h-3.5 w-3.5" />
+            New Task
+          </button>
+        </div>
       </div>
 
-      {/* Search + Add */}
-      <div className="flex gap-2 items-center">
-        <div className="relative flex-1 max-w-md">
-          <input
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search tasks..."
-            className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
-          />
-        </div>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="flex items-center justify-center rounded-lg border border-slate-200 p-2 hover:bg-amber-50 hover:border-amber-300 transition-colors"
-          title="New Task"
-        >
-          <Plus className="h-5 w-5 text-amber-600" />
-        </button>
+      {/* Search */}
+      <div className="relative max-w-md">
+        <input
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search tasks..."
+          className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+        />
       </div>
 
       {loading ? (
