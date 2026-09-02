@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("technician")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AppConfig {
+  id                 String    @id @default("config")
+  walkTheFloorUrl    String    @default("https://walkthefloor.com")
+  walkTheFloorApiKey String?
+  lastSyncAt         DateTime?
+  lastSyncError      String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model WorkOrder {
+  id             String             @id @default(cuid())
+  externalId     String?            @unique
+  title          String
+  description    String?            @db.Text
+  priority       String             @default("MEDIUM")
+  status         String             @default("pending")
+  source         String             @default("local")
+  locationName   String?
+  equipmentName  String?
+  equipmentType  String?
+  assignedTo     String?
+  deferredDate   DateTime?
+  deferredReason String?
+  estimatedCost  Float?
+  actualCost     Float?
+  notes          String?            @db.Text
+  completedAt    DateTime?
+  externalData   Json?
+  invoice        Invoice?
+  comments       WorkOrderComment[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([status])
+  @@index([externalId])
+}
+
+model WorkOrderComment {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  userId      String?
+  content     String
+  createdAt   DateTime  @default(now())
+
+  @@index([workOrderId])
+}
+
+model Invoice {
+  id              String            @id @default(cuid())
+  invoiceNumber   String            @unique
+  workOrderId     String            @unique
+  workOrder       WorkOrder         @relation(fields: [workOrderId], references: [id])
+  vendorName      String?
+  vendorAddress   String?
+  customerName    String?
+  customerAddress String?
+  subtotal        Float             @default(0)
+  tax             Float             @default(0)
+  total           Float             @default(0)
+  status          String            @default("draft")
+  notes           String?
+  lineItems       InvoiceLineItem[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model InvoiceLineItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Float   @default(1)
+  unitPrice   Float   @default(0)
+  total       Float   @default(0)
+  category    String  @default("labor")
+
+  @@index([invoiceId])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  priority    String    @default("MEDIUM")
+  status      String    @default("open")
+  assignedTo  String?
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
