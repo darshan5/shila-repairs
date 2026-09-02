@@ -81,6 +81,7 @@ model Invoice {
   tax             Float             @default(0)
   total           Float             @default(0)
   status          String            @default("draft")
+  finalizedAt     DateTime?
   notes           String?
   lineItems       InvoiceLineItem[]
   createdAt       DateTime          @default(now())

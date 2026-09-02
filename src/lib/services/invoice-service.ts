@@ -104,6 +104,9 @@ export async function addLineItem(
     data: { invoiceId, ...data, total },
   });
 
+  if (invoice.status === "finalized") {
+    await prisma.invoice.update({ where: { id: invoiceId }, data: { status: "draft" } });
+  }
   await recalculateTotals(invoiceId);
   return item;
 }
@@ -117,6 +120,9 @@ export async function removeLineItem(id: string) {
   if (item.invoice.status === "void") throw new Error("Cannot edit voided invoice");
 
   await prisma.invoiceLineItem.delete({ where: { id } });
+  if (item.invoice.status === "finalized") {
+    await prisma.invoice.update({ where: { id: item.invoiceId }, data: { status: "draft" } });
+  }
   await recalculateTotals(item.invoiceId);
 }
 
@@ -128,6 +134,9 @@ export async function updateInvoice(
   if (!invoice) throw new Error("Invoice not found");
   if (invoice.status === "void" && data.status !== "void") throw new Error("Cannot edit voided invoice");
 
+  if (invoice.status === "finalized" && !data.status) {
+    (data as any).status = "draft";
+  }
   const updated = await prisma.invoice.update({ where: { id }, data });
   if (data.tax != null) await recalculateTotals(id);
   return updated;
@@ -137,7 +146,7 @@ export async function finalizeInvoice(id: string) {
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) throw new Error("Invoice not found");
 
-  return prisma.invoice.update({ where: { id }, data: { status: "finalized" } });
+  return prisma.invoice.update({ where: { id }, data: { status: "finalized", finalizedAt: new Date() } });
 }
 
 export async function voidInvoice(id: string) {

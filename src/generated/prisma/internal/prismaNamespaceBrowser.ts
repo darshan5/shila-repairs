@@ -153,6 +153,7 @@ export const InvoiceScalarFieldEnum = {
   tax: 'tax',
   total: 'total',
   status: 'status',
+  finalizedAt: 'finalizedAt',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -11,7 +11,7 @@ type InvoiceDetail = {
   vendorName: string | null; vendorAddress: string | null;
   customerName: string | null; customerAddress: string | null;
   subtotal: number; tax: number; total: number; notes: string | null;
-  createdAt: string; lineItems: LineItem[];
+  finalizedAt: string | null; createdAt: string; lineItems: LineItem[];
   workOrder: { title: string; locationName: string | null; equipmentName: string | null; description: string | null };
 };
 
@@ -122,6 +122,9 @@ export default function InvoiceDetailPage() {
           <button onClick={() => router.push("/invoices")} className="rounded p-1 hover:bg-gray-100"><ArrowLeft className="h-5 w-5" /></button>
           <h1 className="text-xl font-bold">Invoice #{inv.invoiceNumber}</h1>
           <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColors[inv.status] || "bg-slate-100"}`}>{inv.status}</span>
+          {inv.finalizedAt && (
+            <span className="text-xs text-slate-400">Finalized {new Date(inv.finalizedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+          )}
         </div>
         <div className="flex gap-2">
           <button onClick={() => window.print()} className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50">
