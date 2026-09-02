@@ -7,6 +7,7 @@ import {
   FileText,
   CheckSquare,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 const navItems = [
@@ -27,32 +28,51 @@ export default async function AppLayout({
 
   return (
     <div className="flex h-screen">
-      <aside className="hidden w-56 shrink-0 border-r bg-gray-50 md:block">
-        <div className="flex h-14 items-center border-b px-4">
-          <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-            <Wrench className="h-5 w-5 text-blue-600" />
-            <span>Shila Repairs</span>
+      <aside className="hidden w-56 shrink-0 bg-slate-900 md:flex md:flex-col">
+        <div className="flex h-14 items-center gap-2 border-b border-slate-700 px-4">
+          <Wrench className="h-5 w-5 text-amber-500" />
+          <Link href="/dashboard" className="font-bold text-white">
+            Shila Repairs
           </Link>
         </div>
-        <nav className="flex flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col gap-1 p-3">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+              className="flex items-center gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-sm text-slate-300 transition-colors hover:border-amber-500 hover:bg-slate-800 hover:text-white"
             >
               <item.icon className="h-4 w-4" />
               <span>{item.label}</span>
             </Link>
           ))}
         </nav>
+        <div className="border-t border-slate-700 p-3">
+          <div className="px-3 py-2 text-xs text-slate-500">
+            Signed in as
+          </div>
+          <div className="px-3 text-sm font-medium text-slate-300">
+            {session.user.name}
+          </div>
+          <Link
+            href="/api/auth/signout"
+            className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-red-400"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Link>
+        </div>
       </aside>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b px-4 md:px-6">
-          <span className="text-sm font-medium">{session.user.name}</span>
+        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6">
+          <div className="flex items-center gap-2 md:hidden">
+            <Wrench className="h-5 w-5 text-amber-500" />
+            <span className="font-bold text-slate-900">Shila Repairs</span>
+          </div>
+          <span className="text-sm font-medium text-slate-600">{session.user.name}</span>
         </header>
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-slate-50">
           <div className="mx-auto max-w-6xl p-4 md:p-6">{children}</div>
         </main>
       </div>

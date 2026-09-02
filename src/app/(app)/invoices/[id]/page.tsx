@@ -84,7 +84,7 @@ export default function InvoiceDetailPage() {
     fetchInvoice();
   }
 
-  if (loading || !inv) return <p className="py-8 text-center text-gray-500">Loading...</p>;
+  if (loading || !inv) return <p className="py-8 text-center text-slate-400">Loading...</p>;
 
   const isDraft = inv.status === "draft";
   const categoryColors: Record<string, string> = { labor: "bg-blue-100 text-blue-700", parts: "bg-green-100 text-green-700", materials: "bg-amber-100 text-amber-700" };
@@ -98,11 +98,11 @@ export default function InvoiceDetailPage() {
           <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${isDraft ? "bg-gray-100" : "bg-green-100 text-green-700"}`}>{inv.status}</span>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => window.print()} className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50">
+          <button onClick={() => window.print()} className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50">
             <Printer className="h-3.5 w-3.5" />Print
           </button>
           {isDraft && (
-            <button onClick={handleFinalize} className="flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">
+            <button onClick={handleFinalize} className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">
               <Lock className="h-3.5 w-3.5" />Finalize
             </button>
           )}
@@ -112,13 +112,13 @@ export default function InvoiceDetailPage() {
       {/* Print header */}
       <div className="hidden print:block text-center mb-6">
         <h1 className="text-2xl font-bold">Invoice #{inv.invoiceNumber}</h1>
-        <p className="text-gray-500">{new Date(inv.createdAt).toLocaleDateString()}</p>
+        <p className="text-slate-400">{new Date(inv.createdAt).toLocaleDateString()}</p>
       </div>
 
       {/* Vendor / Customer */}
       <div className="grid grid-cols-2 gap-4 rounded-lg border p-4">
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase">From</p>
+          <p className="text-xs font-medium text-slate-400 uppercase">From</p>
           {editingInfo ? (
             <div className="mt-1 space-y-1">
               <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder="Vendor name" className="w-full rounded border px-2 py-1 text-sm" />
@@ -127,12 +127,12 @@ export default function InvoiceDetailPage() {
           ) : (
             <div className="mt-1 text-sm">
               <p className="font-medium">{inv.vendorName || "Not set"}</p>
-              {inv.vendorAddress && <p className="text-gray-500">{inv.vendorAddress}</p>}
+              {inv.vendorAddress && <p className="text-slate-400">{inv.vendorAddress}</p>}
             </div>
           )}
         </div>
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase">To</p>
+          <p className="text-xs font-medium text-slate-400 uppercase">To</p>
           {editingInfo ? (
             <div className="mt-1 space-y-1">
               <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Customer name" className="w-full rounded border px-2 py-1 text-sm" />
@@ -141,7 +141,7 @@ export default function InvoiceDetailPage() {
           ) : (
             <div className="mt-1 text-sm">
               <p className="font-medium">{inv.customerName || inv.workOrder.locationName || "Not set"}</p>
-              {inv.customerAddress && <p className="text-gray-500">{inv.customerAddress}</p>}
+              {inv.customerAddress && <p className="text-slate-400">{inv.customerAddress}</p>}
             </div>
           )}
         </div>
@@ -150,30 +150,30 @@ export default function InvoiceDetailPage() {
             {editingInfo ? (
               <div className="flex gap-2">
                 <div className="flex-1 space-y-1">
-                  <label className="text-xs text-gray-500">Tax</label>
+                  <label className="text-xs text-slate-400">Tax</label>
                   <input type="number" step="0.01" value={tax} onChange={(e) => setTax(e.target.value)} className="w-full rounded border px-2 py-1 text-sm" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <label className="text-xs text-gray-500">Notes</label>
+                  <label className="text-xs text-slate-400">Notes</label>
                   <input value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full rounded border px-2 py-1 text-sm" />
                 </div>
-                <button onClick={handleSaveInfo} className="self-end rounded bg-blue-600 px-3 py-1 text-sm text-white">Save</button>
+                <button onClick={handleSaveInfo} className="self-end rounded bg-amber-500 px-3 py-1 text-sm text-white">Save</button>
                 <button onClick={() => setEditingInfo(false)} className="self-end rounded border px-3 py-1 text-sm">Cancel</button>
               </div>
             ) : (
-              <button onClick={() => setEditingInfo(true)} className="text-xs text-blue-600 hover:underline">Edit info</button>
+              <button onClick={() => setEditingInfo(true)} className="text-xs text-amber-600 hover:underline">Edit info</button>
             )}
           </div>
         )}
       </div>
 
       {/* Work Order ref */}
-      <p className="text-sm text-gray-500">Work Order: {inv.workOrder.title}</p>
+      <p className="text-sm text-slate-400">Work Order: {inv.workOrder.title}</p>
 
       {/* Line Items */}
       <div className="rounded-lg border">
         <table className="w-full text-sm">
-          <thead className="border-b bg-gray-50">
+          <thead className="border-b bg-slate-50">
             <tr>
               <th className="px-3 py-2 text-left font-medium">Description</th>
               <th className="px-3 py-2 text-center font-medium">Category</th>
@@ -214,7 +214,7 @@ export default function InvoiceDetailPage() {
             </select>
             <input type="number" value={newQty} onChange={(e) => setNewQty(e.target.value)} className="w-16 rounded border px-2 py-1 text-sm text-right" />
             <input type="number" step="0.01" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="Price" className="w-24 rounded border px-2 py-1 text-sm text-right" />
-            <button onClick={handleAddItem} disabled={!newDesc.trim() || !newPrice} className="rounded bg-blue-600 p-1.5 text-white disabled:opacity-50">
+            <button onClick={handleAddItem} disabled={!newDesc.trim() || !newPrice} className="rounded bg-amber-500 p-1.5 text-white disabled:opacity-50">
               <Plus className="h-4 w-4" />
             </button>
           </div>
@@ -224,13 +224,13 @@ export default function InvoiceDetailPage() {
       {/* Totals */}
       <div className="flex justify-end">
         <div className="w-64 space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>${inv.subtotal.toFixed(2)}</span></div>
-          <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>${inv.tax.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span className="text-slate-400">Subtotal</span><span>${inv.subtotal.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span className="text-slate-400">Tax</span><span>${inv.tax.toFixed(2)}</span></div>
           <div className="flex justify-between border-t pt-1 font-bold text-base"><span>Total</span><span>${inv.total.toFixed(2)}</span></div>
         </div>
       </div>
 
-      {inv.notes && <p className="text-sm text-gray-500">Notes: {inv.notes}</p>}
+      {inv.notes && <p className="text-sm text-slate-400">Notes: {inv.notes}</p>}
     </div>
   );
 }

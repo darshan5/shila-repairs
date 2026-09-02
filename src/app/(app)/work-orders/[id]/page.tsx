@@ -17,7 +17,7 @@ type WODetail = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-gray-100 text-gray-700", approved: "bg-green-100 text-green-700",
+  pending: "bg-slate-100 text-slate-700", approved: "bg-green-100 text-green-700",
   in_progress: "bg-blue-100 text-blue-700", deferred: "bg-purple-100 text-purple-700",
   completed: "bg-emerald-100 text-emerald-700", invoiced: "bg-amber-100 text-amber-700",
 };
@@ -87,22 +87,22 @@ export default function WorkOrderDetailPage() {
     }
   }
 
-  if (loading || !wo) return <p className="py-8 text-center text-gray-500">Loading...</p>;
+  if (loading || !wo) return <p className="py-8 text-center text-slate-400">Loading...</p>;
 
   const isTerminal = ["completed", "invoiced"].includes(wo.status);
 
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center gap-2">
-        <button onClick={() => router.push("/work-orders")} className="rounded p-1 hover:bg-gray-100">
+        <button onClick={() => router.push("/work-orders")} className="rounded p-1 hover:bg-slate-100">
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="flex-1">
           <h1 className="text-xl font-bold">{wo.title}</h1>
-          <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
+          <div className="flex items-center gap-2 mt-0.5 text-sm text-slate-400">
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[wo.status]}`}>{wo.status.replace("_", " ")}</span>
             <span>{wo.priority}</span>
-            {wo.source === "walkthefloor" && <span className="text-blue-600 text-xs">From WalkTheFloor</span>}
+            {wo.source === "walkthefloor" && <span className="text-amber-600 text-xs">From WalkTheFloor</span>}
           </div>
         </div>
       </div>
@@ -111,17 +111,17 @@ export default function WorkOrderDetailPage() {
       {!isTerminal && (
         <div className="flex gap-2 flex-wrap">
           {(wo.status === "pending" || wo.status === "approved") && (
-            <button onClick={() => handleStatus("in_progress")} disabled={actionLoading} className="flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+            <button onClick={() => handleStatus("in_progress")} disabled={actionLoading} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50">
               <Play className="h-3.5 w-3.5" />Start Work
             </button>
           )}
           {wo.status !== "deferred" && (
-            <button onClick={() => setDeferOpen(!deferOpen)} className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50">
+            <button onClick={() => setDeferOpen(!deferOpen)} className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50">
               <Pause className="h-3.5 w-3.5" />Defer
             </button>
           )}
           {wo.status === "in_progress" && (
-            <button onClick={() => handleStatus("completed")} disabled={actionLoading} className="flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+            <button onClick={() => handleStatus("completed")} disabled={actionLoading} className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
               <CheckCircle2 className="h-3.5 w-3.5" />Complete
             </button>
           )}
@@ -129,7 +129,7 @@ export default function WorkOrderDetailPage() {
       )}
 
       {wo.status === "completed" && !wo.invoice && (
-        <button onClick={handleCreateInvoice} className="flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700">
+        <button onClick={handleCreateInvoice} className="flex items-center gap-1.5 rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700">
           <FileText className="h-3.5 w-3.5" />Create Invoice
         </button>
       )}
@@ -146,16 +146,16 @@ export default function WorkOrderDetailPage() {
         <div className="rounded-lg border p-4 space-y-3">
           <h3 className="text-sm font-medium">Defer Work Order</h3>
           <div>
-            <label className="text-sm text-gray-600">Expected Start Date *</label>
-            <input type="date" value={deferDate} onChange={(e) => setDeferDate(e.target.value)} className="mt-1 w-full rounded-md border px-3 py-1.5 text-sm" />
+            <label className="text-sm text-slate-500">Expected Start Date *</label>
+            <input type="date" value={deferDate} onChange={(e) => setDeferDate(e.target.value)} className="mt-1 w-full rounded-lg border px-3 py-1.5 text-sm" />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Reason</label>
-            <textarea value={deferReason} onChange={(e) => setDeferReason(e.target.value)} className="mt-1 w-full rounded-md border px-3 py-1.5 text-sm" rows={2} />
+            <label className="text-sm text-slate-500">Reason</label>
+            <textarea value={deferReason} onChange={(e) => setDeferReason(e.target.value)} className="mt-1 w-full rounded-lg border px-3 py-1.5 text-sm" rows={2} />
           </div>
           <div className="flex gap-2">
-            <button onClick={() => handleStatus("deferred", { deferredDate: deferDate, deferredReason: deferReason })} disabled={!deferDate || actionLoading} className="rounded-md bg-purple-600 px-3 py-1.5 text-sm text-white disabled:opacity-50">Defer</button>
-            <button onClick={() => setDeferOpen(false)} className="rounded-md border px-3 py-1.5 text-sm">Cancel</button>
+            <button onClick={() => handleStatus("deferred", { deferredDate: deferDate, deferredReason: deferReason })} disabled={!deferDate || actionLoading} className="rounded-lg bg-purple-600 px-3 py-1.5 text-sm text-white disabled:opacity-50">Defer</button>
+            <button onClick={() => setDeferOpen(false)} className="rounded-lg border px-3 py-1.5 text-sm">Cancel</button>
           </div>
         </div>
       )}
@@ -174,19 +174,19 @@ export default function WorkOrderDetailPage() {
         {wo.description && <p className="text-sm">{wo.description}</p>}
         <div className="grid grid-cols-2 gap-3 text-sm">
           {wo.locationName && (
-            <div><span className="text-gray-500">Location</span><p className="font-medium flex items-center gap-1"><MapPin className="h-3 w-3" />{wo.locationName}</p></div>
+            <div><span className="text-slate-400">Location</span><p className="font-medium flex items-center gap-1"><MapPin className="h-3 w-3" />{wo.locationName}</p></div>
           )}
           {wo.equipmentName && (
-            <div><span className="text-gray-500">Equipment</span><p className="font-medium flex items-center gap-1"><Wrench className="h-3 w-3" />{wo.equipmentName}{wo.equipmentType && ` (${wo.equipmentType})`}</p></div>
+            <div><span className="text-slate-400">Equipment</span><p className="font-medium flex items-center gap-1"><Wrench className="h-3 w-3" />{wo.equipmentName}{wo.equipmentType && ` (${wo.equipmentType})`}</p></div>
           )}
           {wo.estimatedCost != null && (
-            <div><span className="text-gray-500">Estimated Cost</span><p className="font-medium">${wo.estimatedCost.toFixed(2)}</p></div>
+            <div><span className="text-slate-400">Estimated Cost</span><p className="font-medium">${wo.estimatedCost.toFixed(2)}</p></div>
           )}
           {wo.actualCost != null && (
-            <div><span className="text-gray-500">Actual Cost</span><p className="font-medium">${wo.actualCost.toFixed(2)}</p></div>
+            <div><span className="text-slate-400">Actual Cost</span><p className="font-medium">${wo.actualCost.toFixed(2)}</p></div>
           )}
-          <div><span className="text-gray-500">Created</span><p>{new Date(wo.createdAt).toLocaleDateString()}</p></div>
-          {wo.completedAt && <div><span className="text-gray-500">Completed</span><p>{new Date(wo.completedAt).toLocaleDateString()}</p></div>}
+          <div><span className="text-slate-400">Created</span><p>{new Date(wo.createdAt).toLocaleDateString()}</p></div>
+          {wo.completedAt && <div><span className="text-slate-400">Completed</span><p>{new Date(wo.completedAt).toLocaleDateString()}</p></div>}
         </div>
       </div>
 
@@ -194,14 +194,14 @@ export default function WorkOrderDetailPage() {
       <div className="space-y-3">
         <h3 className="text-sm font-medium">Comments ({wo.comments.length})</h3>
         {wo.comments.map(c => (
-          <div key={c.id} className="rounded-md bg-gray-50 p-3 text-sm">
+          <div key={c.id} className="rounded-lg bg-slate-50 p-3 text-sm">
             <p>{c.content}</p>
             <p className="mt-1 text-xs text-gray-400">{new Date(c.createdAt).toLocaleString()}</p>
           </div>
         ))}
         <div className="flex gap-2">
-          <input value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment..." className="flex-1 rounded-md border px-3 py-1.5 text-sm" onKeyDown={(e) => e.key === "Enter" && handleComment()} />
-          <button onClick={handleComment} disabled={sending || !comment.trim()} className="rounded-md bg-blue-600 px-3 py-1.5 text-white disabled:opacity-50">
+          <input value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment..." className="flex-1 rounded-lg border px-3 py-1.5 text-sm" onKeyDown={(e) => e.key === "Enter" && handleComment()} />
+          <button onClick={handleComment} disabled={sending || !comment.trim()} className="rounded-lg bg-amber-500 px-3 py-1.5 text-white disabled:opacity-50">
             <Send className="h-4 w-4" />
           </button>
         </div>

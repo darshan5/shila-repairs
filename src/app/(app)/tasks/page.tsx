@@ -7,9 +7,9 @@ type Task = { id: string; title: string; priority: string; status: string; dueDa
 
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-blue-100 text-blue-700",
-  MEDIUM: "bg-yellow-100 text-yellow-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  CRITICAL: "bg-red-100 text-red-700",
+  MEDIUM: "bg-yellow-100 text-yellow-800",
+  HIGH: "bg-orange-200 text-orange-800",
+  CRITICAL: "bg-red-200 text-red-800",
 };
 
 export default function TasksPage() {
@@ -52,58 +52,58 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Tasks</h1>
+      <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
 
       <div className="flex gap-2">
         <input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Add a task..."
-          className="flex-1 rounded-md border px-3 py-2 text-sm"
+          className="flex-1 rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
           onKeyDown={(e) => e.key === "Enter" && handleCreate()}
         />
-        <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)} className="rounded-md border px-2 py-2 text-sm">
+        <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)} className="rounded-lg border border-slate-300 px-2 py-2.5 text-sm outline-none focus:border-amber-500">
           <option value="LOW">Low</option>
           <option value="MEDIUM">Medium</option>
           <option value="HIGH">High</option>
           <option value="CRITICAL">Critical</option>
         </select>
-        <button onClick={handleCreate} disabled={!newTitle.trim()} className="rounded-md bg-blue-600 px-3 py-2 text-white disabled:opacity-50">
+        <button onClick={handleCreate} disabled={!newTitle.trim()} className="rounded-lg bg-amber-500 px-3 py-2.5 text-white shadow-sm transition-colors hover:bg-amber-600 disabled:opacity-50">
           <Plus className="h-4 w-4" />
         </button>
       </div>
 
       {loading ? (
-        <p className="py-8 text-center text-gray-500">Loading...</p>
+        <p className="py-8 text-center text-slate-400">Loading...</p>
       ) : (
         <div className="space-y-2">
           {openTasks.map(task => (
-            <div key={task.id} className="flex items-center gap-3 rounded-lg border p-3">
+            <div key={task.id} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-colors hover:border-amber-200">
               <button onClick={() => handleToggle(task.id)}>
-                <Square className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <Square className="h-5 w-5 text-slate-300 transition-colors hover:text-amber-500" />
               </button>
-              <span className="flex-1 text-sm">{task.title}</span>
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
-              {task.dueDate && <span className="text-xs text-gray-500">{new Date(task.dueDate).toLocaleDateString()}</span>}
+              <span className="flex-1 text-sm text-slate-900">{task.title}</span>
+              <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
+              {task.dueDate && <span className="text-xs text-slate-400">{new Date(task.dueDate).toLocaleDateString()}</span>}
             </div>
           ))}
 
           {completedTasks.length > 0 && (
             <div className="mt-4">
-              <p className="mb-2 text-xs font-medium text-gray-400 uppercase">Completed ({completedTasks.length})</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Completed ({completedTasks.length})</p>
               {completedTasks.map(task => (
-                <div key={task.id} className="flex items-center gap-3 rounded-lg border p-3 opacity-60">
+                <div key={task.id} className="flex items-center gap-3 rounded-lg border border-slate-100 bg-white p-3 opacity-60">
                   <button onClick={() => handleToggle(task.id)}>
-                    <CheckSquare className="h-5 w-5 text-green-600" />
+                    <CheckSquare className="h-5 w-5 text-emerald-500" />
                   </button>
-                  <span className="flex-1 text-sm line-through">{task.title}</span>
+                  <span className="flex-1 text-sm text-slate-500 line-through">{task.title}</span>
                 </div>
               ))}
             </div>
           )}
 
           {tasks.length === 0 && (
-            <div className="rounded-lg border p-8 text-center text-gray-500">No tasks yet.</div>
+            <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-400 shadow-sm">No tasks yet.</div>
           )}
         </div>
       )}

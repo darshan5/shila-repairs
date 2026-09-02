@@ -57,44 +57,44 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-lg space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
 
-      <div className="rounded-lg border p-4 space-y-4">
-        <h2 className="text-lg font-semibold">WalkTheFloor Connection</h2>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900">WalkTheFloor Connection</h2>
 
         <div>
-          <label className="text-sm font-medium">API URL</label>
-          <input value={url} onChange={(e) => setUrl(e.target.value)} className="mt-1 w-full rounded-md border px-3 py-2 text-sm" />
+          <label className="text-sm font-medium text-slate-700">API URL</label>
+          <input value={url} onChange={(e) => setUrl(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
         </div>
 
         <div>
-          <label className="text-sm font-medium">API Key</label>
-          {hasApiKey && !apiKey && <p className="text-xs text-green-600 mb-1">API key configured</p>}
+          <label className="text-sm font-medium text-slate-700">API Key</label>
+          {hasApiKey && !apiKey && <p className="text-xs text-emerald-600 mb-1">API key configured</p>}
           <input
             type="password"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder={hasApiKey ? "Enter new key to replace..." : "Enter API key (wtf_live_...)"}
-            className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
           />
         </div>
 
-        <button onClick={handleSave} disabled={saving} className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+        <button onClick={handleSave} disabled={saving} className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600 disabled:opacity-50">
           {saving ? "Saving..." : "Save Settings"}
         </button>
       </div>
 
-      <div className="rounded-lg border p-4 space-y-3">
-        <h2 className="text-lg font-semibold">Sync Status</h2>
-        <div className="text-sm">
-          <p className="text-gray-600">{hasApiKey ? "API key configured" : "No API key configured"}</p>
-          {lastSync && <p className="text-gray-500">Last sync: {new Date(lastSync).toLocaleString()}</p>}
+      <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+        <h2 className="text-lg font-semibold text-slate-900">Sync Status</h2>
+        <div className="text-sm space-y-1">
+          <p className="text-slate-500">{hasApiKey ? "API key configured" : "No API key configured"}</p>
+          {lastSync && <p className="text-slate-400">Last sync: {new Date(lastSync).toLocaleString()}</p>}
           {lastError && <p className="text-red-600">Last error: {lastError}</p>}
         </div>
         <button
           onClick={handleSync}
           disabled={syncing || !hasApiKey}
-          className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
           {syncing ? "Syncing..." : "Sync Now"}
