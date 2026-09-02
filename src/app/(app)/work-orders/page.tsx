@@ -46,6 +46,7 @@ export default function WorkOrdersPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [syncing, setSyncing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
     title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "",
@@ -145,6 +146,25 @@ export default function WorkOrdersPage() {
         })}
       </div>
 
+      {/* Search + Add */}
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 max-w-md">
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search work orders..."
+            className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+        <button
+          onClick={() => setCreateOpen(true)}
+          className="flex items-center justify-center rounded-lg border border-slate-200 p-2 hover:bg-amber-50 hover:border-amber-300 transition-colors"
+          title="New Work Order"
+        >
+          <Plus className="h-5 w-5 text-amber-600" />
+        </button>
+      </div>
+
       {/* Filters */}
       <div className="flex gap-2">
         <select className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-amber-500" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
@@ -168,14 +188,20 @@ export default function WorkOrdersPage() {
       {/* Work Order List */}
       {loading ? (
         <p className="py-8 text-center text-slate-400">Loading...</p>
-      ) : workOrders.length === 0 ? (
+      ) : (() => {
+        const filtered = workOrders.filter(wo =>
+          !searchQuery || wo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          wo.locationName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          wo.equipmentName?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        return filtered.length === 0 ? (
         <div className="rounded-lg border border-slate-200 bg-white p-12 text-center text-slate-400 shadow-sm">
           <Wrench className="mx-auto mb-2 h-8 w-8 opacity-40" />
           No work orders found.
         </div>
       ) : (
         <div className="space-y-2">
-          {workOrders.map(wo => (
+          {filtered.map(wo => (
             <Link key={wo.id} href={`/work-orders/${wo.id}`} className="block">
               <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-amber-200 hover:shadow-md">
                 <div className="min-w-0 flex-1">
@@ -200,7 +226,8 @@ export default function WorkOrdersPage() {
             </Link>
           ))}
         </div>
-      )}
+      );
+      })()}
 
       {/* FAB */}
       <button

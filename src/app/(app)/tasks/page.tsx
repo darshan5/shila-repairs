@@ -181,15 +181,7 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-3 pb-20">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
-        <div className="flex gap-2">
-          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600">
-            <Plus className="h-3.5 w-3.5" />
-            New Task
-          </button>
-        </div>
-      </div>
+      <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
 
       {/* Search */}
       <div className="relative max-w-md">
