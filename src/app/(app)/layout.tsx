@@ -28,10 +28,10 @@ export default async function AppLayout({
 
   return (
     <div className="flex h-screen">
-      <aside className="hidden w-56 shrink-0 bg-slate-900 md:flex md:flex-col">
-        <div className="flex h-14 items-center gap-2 border-b border-slate-700 px-4">
-          <Wrench className="h-5 w-5 text-amber-500" />
-          <Link href="/dashboard" className="font-bold text-white">
+      <aside className="hidden w-56 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
+        <div className="flex h-14 items-center gap-2 border-b px-4">
+          <Wrench className="h-5 w-5 text-amber-600" />
+          <Link href="/dashboard" className="font-bold text-slate-800">
             Shila Repairs
           </Link>
         </div>
@@ -40,23 +40,23 @@ export default async function AppLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-sm text-slate-300 transition-colors hover:border-amber-500 hover:bg-slate-800 hover:text-white"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 transition-colors hover:bg-amber-50 hover:text-amber-700"
             >
               <item.icon className="h-4 w-4" />
               <span>{item.label}</span>
             </Link>
           ))}
         </nav>
-        <div className="border-t border-slate-700 p-3">
-          <div className="px-3 py-2 text-xs text-slate-500">
+        <div className="border-t p-3">
+          <div className="px-3 py-2 text-xs text-slate-400">
             Signed in as
           </div>
-          <div className="px-3 text-sm font-medium text-slate-300">
+          <div className="px-3 text-sm font-medium text-slate-700">
             {session.user.name}
           </div>
           <Link
             href="/api/auth/signout"
-            className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-red-400"
+            className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
