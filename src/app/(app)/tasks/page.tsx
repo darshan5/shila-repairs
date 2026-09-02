@@ -183,14 +183,23 @@ export default function TasksPage() {
     <div className="space-y-3 pb-20">
       <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <input
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search tasks..."
-          className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
-        />
+      {/* Search + Add */}
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 max-w-md">
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search tasks..."
+            className="w-full rounded-lg border border-slate-200 py-2 pl-3 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+        <button
+          onClick={() => setCreateOpen(true)}
+          className="flex items-center justify-center rounded-lg border border-slate-200 p-2 hover:bg-amber-50 hover:border-amber-300 transition-colors"
+          title="New Task"
+        >
+          <Plus className="h-5 w-5 text-amber-600" />
+        </button>
       </div>
 
       {loading ? (
