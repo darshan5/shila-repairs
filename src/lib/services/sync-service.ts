@@ -42,6 +42,14 @@ export async function syncWorkOrders() {
     const existing = await prisma.workOrder.findUnique({ where: { externalId: wo.id } });
     const mappedStatus = mapWtfStatus(wo.status);
 
+    // Match client by location store number if available
+    let clientId: string | null = null;
+    const locationStoreNumber = wo.location?.storeNumber;
+    if (locationStoreNumber) {
+      const client = await prisma.client.findUnique({ where: { storeNumber: locationStoreNumber } });
+      if (client) clientId = client.id;
+    }
+
     if (existing) {
       if (isStatusAdvanced(existing.status, mappedStatus)) {
         skipped++;
@@ -58,6 +66,7 @@ export async function syncWorkOrders() {
           equipmentName: wo.equipment?.instanceName || existing.equipmentName,
           equipmentType: wo.equipment?.equipmentType?.name || existing.equipmentType,
           estimatedCost: wo.estimatedCost,
+          clientId: clientId || existing.clientId,
           externalData: wo,
         },
       });
@@ -74,6 +83,7 @@ export async function syncWorkOrders() {
           equipmentName: wo.equipment?.instanceName || null,
           equipmentType: wo.equipment?.equipmentType?.name || null,
           estimatedCost: wo.estimatedCost,
+          clientId,
           externalData: wo,
         },
       });
@@ -86,7 +96,50 @@ export async function syncWorkOrders() {
     data: { lastSyncAt: new Date(), lastSyncError: null },
   });
 
-  return { synced, skipped, total: workOrders.length };
+  // Sync locations → clients
+  let clientsSynced = 0;
+  try {
+    const locRes = await fetch(`${url}/api/v1/locations/public`, {
+      headers: { Authorization: `Bearer ${config.walkTheFloorApiKey}` },
+    });
+    if (locRes.ok) {
+      const { data: locations } = await locRes.json();
+      for (const loc of locations) {
+        if (!loc.storeNumber) continue;
+        const existing = await prisma.client.findUnique({ where: { storeNumber: loc.storeNumber } });
+        if (existing) {
+          await prisma.client.update({
+            where: { storeNumber: loc.storeNumber },
+            data: {
+              name: loc.name,
+              address: loc.address || existing.address,
+              city: loc.city || existing.city,
+              state: loc.state || existing.state,
+              zipCode: loc.zipCode || existing.zipCode,
+              phone: loc.phone || existing.phone,
+              email: loc.email || existing.email,
+            },
+          });
+        } else {
+          await prisma.client.create({
+            data: {
+              name: loc.name,
+              storeNumber: loc.storeNumber,
+              address: loc.address,
+              city: loc.city,
+              state: loc.state,
+              zipCode: loc.zipCode,
+              phone: loc.phone,
+              email: loc.email,
+            },
+          });
+        }
+        clientsSynced++;
+      }
+    }
+  } catch {}
+
+  return { synced, skipped, clientsSynced, total: workOrders.length };
 }
 
 export async function pushStatusToWalkTheFloor(workOrderId: string) {
