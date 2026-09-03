@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { RefreshCw, Plus, Wrench, Clock, Play, Pause, CheckCircle2, FileText, X } from "lucide-react";
+import { RefreshCw, Plus, Wrench, Clock, Play, Pause, CheckCircle2, FileText, X, Building2 } from "lucide-react";
 import { toast } from "sonner";
 
 type WO = {
@@ -49,11 +49,15 @@ export default function WorkOrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
-    title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "",
+    title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "", clientId: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [clients, setClients] = useState<{ id: string; name: string; corporationName: string | null; storeNumber: string | null }[]>([]);
 
-  useEffect(() => { fetchWorkOrders(); fetchStats(); }, [statusFilter, priorityFilter]);
+  useEffect(() => {
+    fetchWorkOrders(); fetchStats();
+    fetch("/api/clients?all=true").then(r => r.json()).then(d => setClients(d.data || []));
+  }, [statusFilter, priorityFilter]);
 
   async function fetchWorkOrders() {
     setLoading(true);
@@ -94,6 +98,7 @@ export default function WorkOrdersPage() {
     if (createForm.equipmentName) payload.equipmentName = createForm.equipmentName;
     if (createForm.estimatedCost) payload.estimatedCost = parseFloat(createForm.estimatedCost);
     if (createForm.notes) payload.notes = createForm.notes;
+    if (createForm.clientId) payload.clientId = createForm.clientId;
 
     const res = await fetch("/api/work-orders", {
       method: "POST",
@@ -104,7 +109,7 @@ export default function WorkOrdersPage() {
     if (res.ok) {
       toast.success("Work order created");
       setCreateOpen(false);
-      setCreateForm({ title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "" });
+      setCreateForm({ title: "", description: "", priority: "MEDIUM", locationName: "", equipmentName: "", estimatedCost: "", notes: "", clientId: "" });
       fetchWorkOrders(); fetchStats();
     }
   }
@@ -292,6 +297,23 @@ export default function WorkOrdersPage() {
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Client</label>
+                  <select
+                    value={createForm.clientId}
+                    onChange={e => {
+                      const cid = e.target.value;
+                      const c = clients.find(x => x.id === cid);
+                      setCreateForm({ ...createForm, clientId: cid, locationName: c ? c.name : createForm.locationName });
+                    }}
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                  >
+                    <option value="">No client (manual)</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}{c.storeNumber ? ` #${c.storeNumber}` : ""}{c.corporationName ? ` — ${c.corporationName}` : ""}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

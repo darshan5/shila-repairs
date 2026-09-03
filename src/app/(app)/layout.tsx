@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   Users,
+  Building2,
 } from "lucide-react";
 import { BottomNav, MobileHeader } from "@/components/mobile-nav";
 
@@ -16,6 +17,7 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Work Orders", href: "/work-orders", icon: Wrench },
   { label: "Invoices", href: "/invoices", icon: FileText },
+  { label: "Clients", href: "/clients", icon: Building2 },
   { label: "Tasks", href: "/tasks", icon: CheckSquare },
   { label: "Settings", href: "/settings", icon: Settings },
   { label: "Users", href: "/users", icon: Users },

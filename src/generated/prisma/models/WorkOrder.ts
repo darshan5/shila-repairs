@@ -48,6 +48,7 @@ export type WorkOrderMinAggregateOutputType = {
   equipmentName: string | null
   equipmentType: string | null
   assignedTo: string | null
+  clientId: string | null
   deferredDate: Date | null
   deferredReason: string | null
   estimatedCost: number | null
@@ -70,6 +71,7 @@ export type WorkOrderMaxAggregateOutputType = {
   equipmentName: string | null
   equipmentType: string | null
   assignedTo: string | null
+  clientId: string | null
   deferredDate: Date | null
   deferredReason: string | null
   estimatedCost: number | null
@@ -92,6 +94,7 @@ export type WorkOrderCountAggregateOutputType = {
   equipmentName: number
   equipmentType: number
   assignedTo: number
+  clientId: number
   deferredDate: number
   deferredReason: number
   estimatedCost: number
@@ -127,6 +130,7 @@ export type WorkOrderMinAggregateInputType = {
   equipmentName?: true
   equipmentType?: true
   assignedTo?: true
+  clientId?: true
   deferredDate?: true
   deferredReason?: true
   estimatedCost?: true
@@ -149,6 +153,7 @@ export type WorkOrderMaxAggregateInputType = {
   equipmentName?: true
   equipmentType?: true
   assignedTo?: true
+  clientId?: true
   deferredDate?: true
   deferredReason?: true
   estimatedCost?: true
@@ -171,6 +176,7 @@ export type WorkOrderCountAggregateInputType = {
   equipmentName?: true
   equipmentType?: true
   assignedTo?: true
+  clientId?: true
   deferredDate?: true
   deferredReason?: true
   estimatedCost?: true
@@ -281,6 +287,7 @@ export type WorkOrderGroupByOutputType = {
   equipmentName: string | null
   equipmentType: string | null
   assignedTo: string | null
+  clientId: string | null
   deferredDate: Date | null
   deferredReason: string | null
   estimatedCost: number | null
@@ -327,6 +334,7 @@ export type WorkOrderWhereInput = {
   equipmentName?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   equipmentType?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   assignedTo?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  clientId?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   deferredDate?: Prisma.DateTimeNullableFilter<"WorkOrder"> | Date | string | null
   deferredReason?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   estimatedCost?: Prisma.FloatNullableFilter<"WorkOrder"> | number | null
@@ -336,6 +344,7 @@ export type WorkOrderWhereInput = {
   externalData?: Prisma.JsonNullableFilter<"WorkOrder">
   createdAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
+  client?: Prisma.XOR<Prisma.ClientNullableScalarRelationFilter, Prisma.ClientWhereInput> | null
   invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
   comments?: Prisma.WorkOrderCommentListRelationFilter
 }
@@ -352,6 +361,7 @@ export type WorkOrderOrderByWithRelationInput = {
   equipmentName?: Prisma.SortOrderInput | Prisma.SortOrder
   equipmentType?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   deferredDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deferredReason?: Prisma.SortOrderInput | Prisma.SortOrder
   estimatedCost?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -361,6 +371,7 @@ export type WorkOrderOrderByWithRelationInput = {
   externalData?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  client?: Prisma.ClientOrderByWithRelationInput
   invoice?: Prisma.InvoiceOrderByWithRelationInput
   comments?: Prisma.WorkOrderCommentOrderByRelationAggregateInput
 }
@@ -380,6 +391,7 @@ export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
   equipmentName?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   equipmentType?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   assignedTo?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  clientId?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   deferredDate?: Prisma.DateTimeNullableFilter<"WorkOrder"> | Date | string | null
   deferredReason?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
   estimatedCost?: Prisma.FloatNullableFilter<"WorkOrder"> | number | null
@@ -389,6 +401,7 @@ export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
   externalData?: Prisma.JsonNullableFilter<"WorkOrder">
   createdAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
+  client?: Prisma.XOR<Prisma.ClientNullableScalarRelationFilter, Prisma.ClientWhereInput> | null
   invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
   comments?: Prisma.WorkOrderCommentListRelationFilter
 }, "id" | "externalId">
@@ -405,6 +418,7 @@ export type WorkOrderOrderByWithAggregationInput = {
   equipmentName?: Prisma.SortOrderInput | Prisma.SortOrder
   equipmentType?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   deferredDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deferredReason?: Prisma.SortOrderInput | Prisma.SortOrder
   estimatedCost?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -436,6 +450,7 @@ export type WorkOrderScalarWhereWithAggregatesInput = {
   equipmentName?: Prisma.StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
   equipmentType?: Prisma.StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
   assignedTo?: Prisma.StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
+  clientId?: Prisma.StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
   deferredDate?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkOrder"> | Date | string | null
   deferredReason?: Prisma.StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
   estimatedCost?: Prisma.FloatNullableWithAggregatesFilter<"WorkOrder"> | number | null
@@ -468,6 +483,7 @@ export type WorkOrderCreateInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  client?: Prisma.ClientCreateNestedOneWithoutWorkOrdersInput
   invoice?: Prisma.InvoiceCreateNestedOneWithoutWorkOrderInput
   comments?: Prisma.WorkOrderCommentCreateNestedManyWithoutWorkOrderInput
 }
@@ -484,6 +500,7 @@ export type WorkOrderUncheckedCreateInput = {
   equipmentName?: string | null
   equipmentType?: string | null
   assignedTo?: string | null
+  clientId?: string | null
   deferredDate?: Date | string | null
   deferredReason?: string | null
   estimatedCost?: number | null
@@ -518,6 +535,7 @@ export type WorkOrderUpdateInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneWithoutWorkOrdersNestedInput
   invoice?: Prisma.InvoiceUpdateOneWithoutWorkOrderNestedInput
   comments?: Prisma.WorkOrderCommentUpdateManyWithoutWorkOrderNestedInput
 }
@@ -534,6 +552,7 @@ export type WorkOrderUncheckedUpdateInput = {
   equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -559,6 +578,7 @@ export type WorkOrderCreateManyInput = {
   equipmentName?: string | null
   equipmentType?: string | null
   assignedTo?: string | null
+  clientId?: string | null
   deferredDate?: Date | string | null
   deferredReason?: string | null
   estimatedCost?: number | null
@@ -605,6 +625,7 @@ export type WorkOrderUncheckedUpdateManyInput = {
   equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -614,6 +635,16 @@ export type WorkOrderUncheckedUpdateManyInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WorkOrderListRelationFilter = {
+  every?: Prisma.WorkOrderWhereInput
+  some?: Prisma.WorkOrderWhereInput
+  none?: Prisma.WorkOrderWhereInput
+}
+
+export type WorkOrderOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type WorkOrderCountOrderByAggregateInput = {
@@ -628,6 +659,7 @@ export type WorkOrderCountOrderByAggregateInput = {
   equipmentName?: Prisma.SortOrder
   equipmentType?: Prisma.SortOrder
   assignedTo?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
   deferredDate?: Prisma.SortOrder
   deferredReason?: Prisma.SortOrder
   estimatedCost?: Prisma.SortOrder
@@ -656,6 +688,7 @@ export type WorkOrderMaxOrderByAggregateInput = {
   equipmentName?: Prisma.SortOrder
   equipmentType?: Prisma.SortOrder
   assignedTo?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
   deferredDate?: Prisma.SortOrder
   deferredReason?: Prisma.SortOrder
   estimatedCost?: Prisma.SortOrder
@@ -678,6 +711,7 @@ export type WorkOrderMinOrderByAggregateInput = {
   equipmentName?: Prisma.SortOrder
   equipmentType?: Prisma.SortOrder
   assignedTo?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
   deferredDate?: Prisma.SortOrder
   deferredReason?: Prisma.SortOrder
   estimatedCost?: Prisma.SortOrder
@@ -696,6 +730,48 @@ export type WorkOrderSumOrderByAggregateInput = {
 export type WorkOrderScalarRelationFilter = {
   is?: Prisma.WorkOrderWhereInput
   isNot?: Prisma.WorkOrderWhereInput
+}
+
+export type WorkOrderCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput> | Prisma.WorkOrderCreateWithoutClientInput[] | Prisma.WorkOrderUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutClientInput | Prisma.WorkOrderCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.WorkOrderCreateManyClientInputEnvelope
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+}
+
+export type WorkOrderUncheckedCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput> | Prisma.WorkOrderCreateWithoutClientInput[] | Prisma.WorkOrderUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutClientInput | Prisma.WorkOrderCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.WorkOrderCreateManyClientInputEnvelope
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+}
+
+export type WorkOrderUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput> | Prisma.WorkOrderCreateWithoutClientInput[] | Prisma.WorkOrderUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutClientInput | Prisma.WorkOrderCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.WorkOrderUpsertWithWhereUniqueWithoutClientInput | Prisma.WorkOrderUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.WorkOrderCreateManyClientInputEnvelope
+  set?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  disconnect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  delete?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  update?: Prisma.WorkOrderUpdateWithWhereUniqueWithoutClientInput | Prisma.WorkOrderUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.WorkOrderUpdateManyWithWhereWithoutClientInput | Prisma.WorkOrderUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
+}
+
+export type WorkOrderUncheckedUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput> | Prisma.WorkOrderCreateWithoutClientInput[] | Prisma.WorkOrderUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutClientInput | Prisma.WorkOrderCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.WorkOrderUpsertWithWhereUniqueWithoutClientInput | Prisma.WorkOrderUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.WorkOrderCreateManyClientInputEnvelope
+  set?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  disconnect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  delete?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  update?: Prisma.WorkOrderUpdateWithWhereUniqueWithoutClientInput | Prisma.WorkOrderUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.WorkOrderUpdateManyWithWhereWithoutClientInput | Prisma.WorkOrderUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
@@ -734,7 +810,7 @@ export type WorkOrderUpdateOneRequiredWithoutInvoiceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkOrderUpdateToOneWithWhereWithoutInvoiceInput, Prisma.WorkOrderUpdateWithoutInvoiceInput>, Prisma.WorkOrderUncheckedUpdateWithoutInvoiceInput>
 }
 
-export type WorkOrderCreateWithoutCommentsInput = {
+export type WorkOrderCreateWithoutClientInput = {
   id?: string
   externalId?: string | null
   title: string
@@ -756,6 +832,110 @@ export type WorkOrderCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   invoice?: Prisma.InvoiceCreateNestedOneWithoutWorkOrderInput
+  comments?: Prisma.WorkOrderCommentCreateNestedManyWithoutWorkOrderInput
+}
+
+export type WorkOrderUncheckedCreateWithoutClientInput = {
+  id?: string
+  externalId?: string | null
+  title: string
+  description?: string | null
+  priority?: string
+  status?: string
+  source?: string
+  locationName?: string | null
+  equipmentName?: string | null
+  equipmentType?: string | null
+  assignedTo?: string | null
+  deferredDate?: Date | string | null
+  deferredReason?: string | null
+  estimatedCost?: number | null
+  actualCost?: number | null
+  notes?: string | null
+  completedAt?: Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutWorkOrderInput
+  comments?: Prisma.WorkOrderCommentUncheckedCreateNestedManyWithoutWorkOrderInput
+}
+
+export type WorkOrderCreateOrConnectWithoutClientInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput>
+}
+
+export type WorkOrderCreateManyClientInputEnvelope = {
+  data: Prisma.WorkOrderCreateManyClientInput | Prisma.WorkOrderCreateManyClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type WorkOrderUpsertWithWhereUniqueWithoutClientInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  update: Prisma.XOR<Prisma.WorkOrderUpdateWithoutClientInput, Prisma.WorkOrderUncheckedUpdateWithoutClientInput>
+  create: Prisma.XOR<Prisma.WorkOrderCreateWithoutClientInput, Prisma.WorkOrderUncheckedCreateWithoutClientInput>
+}
+
+export type WorkOrderUpdateWithWhereUniqueWithoutClientInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  data: Prisma.XOR<Prisma.WorkOrderUpdateWithoutClientInput, Prisma.WorkOrderUncheckedUpdateWithoutClientInput>
+}
+
+export type WorkOrderUpdateManyWithWhereWithoutClientInput = {
+  where: Prisma.WorkOrderScalarWhereInput
+  data: Prisma.XOR<Prisma.WorkOrderUpdateManyMutationInput, Prisma.WorkOrderUncheckedUpdateManyWithoutClientInput>
+}
+
+export type WorkOrderScalarWhereInput = {
+  AND?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
+  OR?: Prisma.WorkOrderScalarWhereInput[]
+  NOT?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
+  id?: Prisma.StringFilter<"WorkOrder"> | string
+  externalId?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  title?: Prisma.StringFilter<"WorkOrder"> | string
+  description?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  priority?: Prisma.StringFilter<"WorkOrder"> | string
+  status?: Prisma.StringFilter<"WorkOrder"> | string
+  source?: Prisma.StringFilter<"WorkOrder"> | string
+  locationName?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  equipmentName?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  equipmentType?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  assignedTo?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  clientId?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  deferredDate?: Prisma.DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+  deferredReason?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  estimatedCost?: Prisma.FloatNullableFilter<"WorkOrder"> | number | null
+  actualCost?: Prisma.FloatNullableFilter<"WorkOrder"> | number | null
+  notes?: Prisma.StringNullableFilter<"WorkOrder"> | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+  externalData?: Prisma.JsonNullableFilter<"WorkOrder">
+  createdAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
+}
+
+export type WorkOrderCreateWithoutCommentsInput = {
+  id?: string
+  externalId?: string | null
+  title: string
+  description?: string | null
+  priority?: string
+  status?: string
+  source?: string
+  locationName?: string | null
+  equipmentName?: string | null
+  equipmentType?: string | null
+  assignedTo?: string | null
+  deferredDate?: Date | string | null
+  deferredReason?: string | null
+  estimatedCost?: number | null
+  actualCost?: number | null
+  notes?: string | null
+  completedAt?: Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  client?: Prisma.ClientCreateNestedOneWithoutWorkOrdersInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutWorkOrderInput
 }
 
 export type WorkOrderUncheckedCreateWithoutCommentsInput = {
@@ -770,6 +950,7 @@ export type WorkOrderUncheckedCreateWithoutCommentsInput = {
   equipmentName?: string | null
   equipmentType?: string | null
   assignedTo?: string | null
+  clientId?: string | null
   deferredDate?: Date | string | null
   deferredReason?: string | null
   estimatedCost?: number | null
@@ -819,6 +1000,7 @@ export type WorkOrderUpdateWithoutCommentsInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneWithoutWorkOrdersNestedInput
   invoice?: Prisma.InvoiceUpdateOneWithoutWorkOrderNestedInput
 }
 
@@ -834,6 +1016,7 @@ export type WorkOrderUncheckedUpdateWithoutCommentsInput = {
   equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -867,6 +1050,7 @@ export type WorkOrderCreateWithoutInvoiceInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  client?: Prisma.ClientCreateNestedOneWithoutWorkOrdersInput
   comments?: Prisma.WorkOrderCommentCreateNestedManyWithoutWorkOrderInput
 }
 
@@ -882,6 +1066,7 @@ export type WorkOrderUncheckedCreateWithoutInvoiceInput = {
   equipmentName?: string | null
   equipmentType?: string | null
   assignedTo?: string | null
+  clientId?: string | null
   deferredDate?: Date | string | null
   deferredReason?: string | null
   estimatedCost?: number | null
@@ -931,10 +1116,59 @@ export type WorkOrderUpdateWithoutInvoiceInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneWithoutWorkOrdersNestedInput
   comments?: Prisma.WorkOrderCommentUpdateManyWithoutWorkOrderNestedInput
 }
 
 export type WorkOrderUncheckedUpdateWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  locationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  actualCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  comments?: Prisma.WorkOrderCommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+}
+
+export type WorkOrderCreateManyClientInput = {
+  id?: string
+  externalId?: string | null
+  title: string
+  description?: string | null
+  priority?: string
+  status?: string
+  source?: string
+  locationName?: string | null
+  equipmentName?: string | null
+  equipmentType?: string | null
+  assignedTo?: string | null
+  deferredDate?: Date | string | null
+  deferredReason?: string | null
+  estimatedCost?: number | null
+  actualCost?: number | null
+  notes?: string | null
+  completedAt?: Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WorkOrderUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -955,7 +1189,56 @@ export type WorkOrderUncheckedUpdateWithoutInvoiceInput = {
   externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invoice?: Prisma.InvoiceUpdateOneWithoutWorkOrderNestedInput
+  comments?: Prisma.WorkOrderCommentUpdateManyWithoutWorkOrderNestedInput
+}
+
+export type WorkOrderUncheckedUpdateWithoutClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  locationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  actualCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutWorkOrderNestedInput
   comments?: Prisma.WorkOrderCommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+}
+
+export type WorkOrderUncheckedUpdateManyWithoutClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  locationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deferredDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deferredReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  actualCost?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  externalData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1001,6 +1284,7 @@ export type WorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   equipmentName?: boolean
   equipmentType?: boolean
   assignedTo?: boolean
+  clientId?: boolean
   deferredDate?: boolean
   deferredReason?: boolean
   estimatedCost?: boolean
@@ -1010,6 +1294,7 @@ export type WorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   externalData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
   invoice?: boolean | Prisma.WorkOrder$invoiceArgs<ExtArgs>
   comments?: boolean | Prisma.WorkOrder$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
@@ -1027,6 +1312,7 @@ export type WorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   equipmentName?: boolean
   equipmentType?: boolean
   assignedTo?: boolean
+  clientId?: boolean
   deferredDate?: boolean
   deferredReason?: boolean
   estimatedCost?: boolean
@@ -1036,6 +1322,7 @@ export type WorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   externalData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
 }, ExtArgs["result"]["workOrder"]>
 
 export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1050,6 +1337,7 @@ export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   equipmentName?: boolean
   equipmentType?: boolean
   assignedTo?: boolean
+  clientId?: boolean
   deferredDate?: boolean
   deferredReason?: boolean
   estimatedCost?: boolean
@@ -1059,6 +1347,7 @@ export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   externalData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
 }, ExtArgs["result"]["workOrder"]>
 
 export type WorkOrderSelectScalar = {
@@ -1073,6 +1362,7 @@ export type WorkOrderSelectScalar = {
   equipmentName?: boolean
   equipmentType?: boolean
   assignedTo?: boolean
+  clientId?: boolean
   deferredDate?: boolean
   deferredReason?: boolean
   estimatedCost?: boolean
@@ -1084,18 +1374,24 @@ export type WorkOrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalId" | "title" | "description" | "priority" | "status" | "source" | "locationName" | "equipmentName" | "equipmentType" | "assignedTo" | "deferredDate" | "deferredReason" | "estimatedCost" | "actualCost" | "notes" | "completedAt" | "externalData" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
+export type WorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalId" | "title" | "description" | "priority" | "status" | "source" | "locationName" | "equipmentName" | "equipmentType" | "assignedTo" | "clientId" | "deferredDate" | "deferredReason" | "estimatedCost" | "actualCost" | "notes" | "completedAt" | "externalData" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
 export type WorkOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
   invoice?: boolean | Prisma.WorkOrder$invoiceArgs<ExtArgs>
   comments?: boolean | Prisma.WorkOrder$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type WorkOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type WorkOrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type WorkOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
+}
+export type WorkOrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  client?: boolean | Prisma.WorkOrder$clientArgs<ExtArgs>
+}
 
 export type $WorkOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "WorkOrder"
   objects: {
+    client: Prisma.$ClientPayload<ExtArgs> | null
     invoice: Prisma.$InvoicePayload<ExtArgs> | null
     comments: Prisma.$WorkOrderCommentPayload<ExtArgs>[]
   }
@@ -1111,6 +1407,7 @@ export type $WorkOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     equipmentName: string | null
     equipmentType: string | null
     assignedTo: string | null
+    clientId: string | null
     deferredDate: Date | null
     deferredReason: string | null
     estimatedCost: number | null
@@ -1514,6 +1811,7 @@ readonly fields: WorkOrderFieldRefs;
  */
 export interface Prisma__WorkOrderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  client<T extends Prisma.WorkOrder$clientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$clientArgs<ExtArgs>>): Prisma.Prisma__ClientClient<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   invoice<T extends Prisma.WorkOrder$invoiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$invoiceArgs<ExtArgs>>): Prisma.Prisma__InvoiceClient<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   comments<T extends Prisma.WorkOrder$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkOrderCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1556,6 +1854,7 @@ export interface WorkOrderFieldRefs {
   readonly equipmentName: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly equipmentType: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly assignedTo: Prisma.FieldRef<"WorkOrder", 'String'>
+  readonly clientId: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly deferredDate: Prisma.FieldRef<"WorkOrder", 'DateTime'>
   readonly deferredReason: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly estimatedCost: Prisma.FieldRef<"WorkOrder", 'Float'>
@@ -1819,6 +2118,10 @@ export type WorkOrderCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    */
   data: Prisma.WorkOrderCreateManyInput | Prisma.WorkOrderCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkOrderIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1889,6 +2192,10 @@ export type WorkOrderUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many WorkOrders to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkOrderIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1955,6 +2262,25 @@ export type WorkOrderDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Limit how many WorkOrders to delete.
    */
   limit?: number
+}
+
+/**
+ * WorkOrder.client
+ */
+export type WorkOrder$clientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Client
+   */
+  select?: Prisma.ClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Client
+   */
+  omit?: Prisma.ClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientInclude<ExtArgs> | null
+  where?: Prisma.ClientWhereInput
 }
 
 /**

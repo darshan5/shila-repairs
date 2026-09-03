@@ -8,7 +8,7 @@ function generateInvoiceNumber(): string {
 }
 
 export async function createInvoice(workOrderId: string) {
-  const wo = await prisma.workOrder.findUnique({ where: { id: workOrderId } });
+  const wo = await prisma.workOrder.findUnique({ where: { id: workOrderId }, include: { client: true } });
   if (!wo) throw new Error("Work order not found");
 
   const existing = await prisma.invoice.findUnique({ where: { workOrderId } });
@@ -16,12 +16,21 @@ export async function createInvoice(workOrderId: string) {
 
   const cost = wo.actualCost || wo.estimatedCost || 0;
 
+  let customerName = wo.locationName || "";
+  let customerAddress = wo.equipmentName ? `Equipment: ${wo.equipmentName}` : "";
+
+  if (wo.client) {
+    customerName = wo.client.billingName || wo.client.corporationName || wo.client.name;
+    const parts = [wo.client.billingAddress, wo.client.billingCity, wo.client.billingState && wo.client.billingZip ? `${wo.client.billingState} ${wo.client.billingZip}` : wo.client.billingState || wo.client.billingZip].filter(Boolean);
+    if (parts.length) customerAddress = parts.join(", ");
+  }
+
   const invoice = await prisma.invoice.create({
     data: {
       invoiceNumber: generateInvoiceNumber(),
       workOrderId,
-      customerName: wo.locationName || "",
-      customerAddress: wo.equipmentName ? `Equipment: ${wo.equipmentName}` : "",
+      customerName,
+      customerAddress,
       subtotal: cost,
       total: cost,
       notes: wo.notes || wo.description || "",

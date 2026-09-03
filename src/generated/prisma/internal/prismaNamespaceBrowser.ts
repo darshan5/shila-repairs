@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   AppConfig: 'AppConfig',
+  Client: 'Client',
   WorkOrder: 'WorkOrder',
   WorkOrderComment: 'WorkOrderComment',
   Invoice: 'Invoice',
@@ -104,6 +105,33 @@ export const AppConfigScalarFieldEnum = {
 export type AppConfigScalarFieldEnum = (typeof AppConfigScalarFieldEnum)[keyof typeof AppConfigScalarFieldEnum]
 
 
+export const ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  corporationName: 'corporationName',
+  storeNumber: 'storeNumber',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode',
+  phone: 'phone',
+  email: 'email',
+  billingName: 'billingName',
+  billingAddress: 'billingAddress',
+  billingCity: 'billingCity',
+  billingState: 'billingState',
+  billingZip: 'billingZip',
+  billingPhone: 'billingPhone',
+  billingEmail: 'billingEmail',
+  notes: 'notes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
 export const WorkOrderScalarFieldEnum = {
   id: 'id',
   externalId: 'externalId',
@@ -116,6 +144,7 @@ export const WorkOrderScalarFieldEnum = {
   equipmentName: 'equipmentName',
   equipmentType: 'equipmentType',
   assignedTo: 'assignedTo',
+  clientId: 'clientId',
   deferredDate: 'deferredDate',
   deferredReason: 'deferredReason',
   estimatedCost: 'estimatedCost',

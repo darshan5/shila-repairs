@@ -54,6 +54,7 @@ export async function createWorkOrder(data: {
   assignedTo?: string;
   estimatedCost?: number;
   notes?: string;
+  clientId?: string;
 }) {
   return prisma.workOrder.create({
     data: {
@@ -66,6 +67,7 @@ export async function createWorkOrder(data: {
       assignedTo: data.assignedTo,
       estimatedCost: data.estimatedCost,
       notes: data.notes,
+      clientId: data.clientId || null,
     },
   });
 }

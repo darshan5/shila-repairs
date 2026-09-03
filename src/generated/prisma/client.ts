@@ -52,6 +52,11 @@ export type User = Prisma.UserModel
  */
 export type AppConfig = Prisma.AppConfigModel
 /**
+ * Model Client
+ * 
+ */
+export type Client = Prisma.ClientModel
+/**
  * Model WorkOrder
  * 
  */

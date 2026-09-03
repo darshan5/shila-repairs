@@ -399,6 +399,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   AppConfig: 'AppConfig',
+  Client: 'Client',
   WorkOrder: 'WorkOrder',
   WorkOrderComment: 'WorkOrderComment',
   Invoice: 'Invoice',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "appConfig" | "workOrder" | "workOrderComment" | "invoice" | "invoiceLineItem" | "task"
+    modelProps: "user" | "appConfig" | "client" | "workOrder" | "workOrderComment" | "invoice" | "invoiceLineItem" | "task"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -568,6 +569,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AppConfigCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AppConfigCountAggregateOutputType> | number
+        }
+      }
+    }
+    Client: {
+      payload: Prisma.$ClientPayload<ExtArgs>
+      fields: Prisma.ClientFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClientFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClientFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        findFirst: {
+          args: Prisma.ClientFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClientFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        findMany: {
+          args: Prisma.ClientFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>[]
+        }
+        create: {
+          args: Prisma.ClientCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        createMany: {
+          args: Prisma.ClientCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClientCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>[]
+        }
+        delete: {
+          args: Prisma.ClientDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        update: {
+          args: Prisma.ClientUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClientDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClientUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClientUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClientUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientPayload>
+        }
+        aggregate: {
+          args: Prisma.ClientAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClient>
+        }
+        groupBy: {
+          args: Prisma.ClientGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClientGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClientCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClientCountAggregateOutputType> | number
         }
       }
     }
@@ -1008,6 +1083,33 @@ export const AppConfigScalarFieldEnum = {
 export type AppConfigScalarFieldEnum = (typeof AppConfigScalarFieldEnum)[keyof typeof AppConfigScalarFieldEnum]
 
 
+export const ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  corporationName: 'corporationName',
+  storeNumber: 'storeNumber',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode',
+  phone: 'phone',
+  email: 'email',
+  billingName: 'billingName',
+  billingAddress: 'billingAddress',
+  billingCity: 'billingCity',
+  billingState: 'billingState',
+  billingZip: 'billingZip',
+  billingPhone: 'billingPhone',
+  billingEmail: 'billingEmail',
+  notes: 'notes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
 export const WorkOrderScalarFieldEnum = {
   id: 'id',
   externalId: 'externalId',
@@ -1020,6 +1122,7 @@ export const WorkOrderScalarFieldEnum = {
   equipmentName: 'equipmentName',
   equipmentType: 'equipmentType',
   assignedTo: 'assignedTo',
+  clientId: 'clientId',
   deferredDate: 'deferredDate',
   deferredReason: 'deferredReason',
   estimatedCost: 'estimatedCost',
@@ -1371,6 +1474,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   appConfig?: Prisma.AppConfigOmit
+  client?: Prisma.ClientOmit
   workOrder?: Prisma.WorkOrderOmit
   workOrderComment?: Prisma.WorkOrderCommentOmit
   invoice?: Prisma.InvoiceOmit

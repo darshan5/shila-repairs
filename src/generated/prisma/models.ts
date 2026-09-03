@@ -10,6 +10,7 @@
  */
 export type * from './models/User'
 export type * from './models/AppConfig'
+export type * from './models/Client'
 export type * from './models/WorkOrder'
 export type * from './models/WorkOrderComment'
 export type * from './models/Invoice'
