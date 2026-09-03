@@ -99,7 +99,7 @@ export async function syncWorkOrders() {
   // Sync locations → clients
   let clientsSynced = 0;
   try {
-    const locRes = await fetch(`${url}/api/v1/locations/public`, {
+    const locRes = await fetch(`${url}/api/v1/locations/sync`, {
       headers: { Authorization: `Bearer ${config.walkTheFloorApiKey}` },
     });
     if (locRes.ok) {
