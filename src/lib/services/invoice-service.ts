@@ -54,9 +54,18 @@ export async function createInvoice(workOrderId: string) {
   return invoice;
 }
 
-export async function getInvoices(filters?: { status?: string; search?: string; sortBy?: string; page?: number; limit?: number }) {
+export async function getInvoices(filters?: { status?: string; search?: string; sortBy?: string; page?: number; limit?: number; dateFrom?: string; dateTo?: string }) {
   const where: any = {};
-  if (filters?.status && filters.status !== "all") where.status = filters.status;
+  if (filters?.status === "active") {
+    where.status = { not: "void" };
+  } else if (filters?.status && filters.status !== "all") {
+    where.status = filters.status;
+  }
+  if (filters?.dateFrom || filters?.dateTo) {
+    where.createdAt = {};
+    if (filters.dateFrom) where.createdAt.gte = new Date(filters.dateFrom);
+    if (filters.dateTo) where.createdAt.lte = new Date(filters.dateTo + "T23:59:59Z");
+  }
   if (filters?.search) {
     where.OR = [
       { invoiceNumber: { contains: filters.search, mode: "insensitive" } },

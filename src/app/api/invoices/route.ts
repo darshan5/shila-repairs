@@ -7,11 +7,13 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const result = await getInvoices({
-    status: searchParams.get("status") || undefined,
+    status: searchParams.get("status") || "active",
     search: searchParams.get("search") || undefined,
     sortBy: searchParams.get("sortBy") || undefined,
     page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined,
     limit: searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined,
+    dateFrom: searchParams.get("dateFrom") || undefined,
+    dateTo: searchParams.get("dateTo") || undefined,
   });
   return Response.json(result);
 }

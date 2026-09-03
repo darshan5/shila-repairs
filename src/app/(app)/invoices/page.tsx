@@ -20,17 +20,23 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [statusFilter, setStatusFilter] = useState("active");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => { setPage(1); }, [search, sortBy]);
-  useEffect(() => { fetchInvoices(); }, [page, search, sortBy]);
+  useEffect(() => { setPage(1); }, [search, sortBy, statusFilter, dateFrom, dateTo]);
+  useEffect(() => { fetchInvoices(); }, [page, search, sortBy, statusFilter, dateFrom, dateTo]);
 
   async function fetchInvoices() {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: "10", sortBy });
     if (search) params.set("search", search);
+    if (statusFilter && statusFilter !== "all") params.set("status", statusFilter);
+    if (dateFrom) params.set("dateFrom", dateFrom);
+    if (dateTo) params.set("dateTo", dateTo);
     const res = await fetch(`/api/invoices?${params}`);
     if (res.ok) {
       const result = await res.json();
@@ -61,12 +67,28 @@ export default function InvoicesPage() {
             className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
           />
         </div>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+          <option value="active">Active (no void)</option>
+          <option value="all">All Invoices</option>
+          <option value="draft">Draft</option>
+          <option value="finalized">Finalized</option>
+          <option value="void">Void Only</option>
+        </select>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
           <option value="total">Highest Total</option>
           <option value="status">By Status</option>
         </select>
+      </div>
+      <div className="flex gap-2 items-center flex-wrap">
+        <label className="text-xs text-slate-500">From</label>
+        <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm outline-none focus:border-amber-500" />
+        <label className="text-xs text-slate-500">To</label>
+        <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm outline-none focus:border-amber-500" />
+        {(dateFrom || dateTo) && (
+          <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="text-xs text-amber-600 hover:underline">Clear dates</button>
+        )}
       </div>
 
       {loading ? (
